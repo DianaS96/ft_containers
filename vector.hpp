@@ -2,8 +2,16 @@
 # define VECTOR_HPP
 
 #include <memory>
+#include <exception>
+#include <stdexcept> 
 
-template<
+/* SOURCES OF INFO:
+** 1) https://www.youtube.com/watch?v=_wE7JYfcKN0
+** 2) https://en.cppreference.com/w/cpp/container/vector
+** 3) https://cplusplus.com/reference/vector/vector/?kw=vector
+*/
+
+template <
     class T,
     class Allocator = std::allocator<T>
 > class vector
@@ -120,7 +128,7 @@ template<
 		void swap( vector& other );
 
 	private:
-		T*			_data;
+		T*			_array;
 		size_type	_capacity;
 		size_type	_size;
 		Allocator	_alloc;
@@ -128,5 +136,77 @@ template<
 
 };
 
+template <class T, class Allocator>
+vector<T, Allocator>::reference vector<T, Allocator>::operator[]( size_type pos ) {
+	return (_array[pos])
+}
+
+template <class T, class Allocator>
+vector<T, Allocator>::const_reference vector<T, Allocator>::operator[]( size_type pos ) const {
+	return (_array[pos])
+}
+
+template <class T, class Allocator>
+vector<T, Allocator>::reference vector<T, Allocator>::at( size_type pos ) {
+	if (pos >= _size)
+		throw std::out_of_range("invalid vector subscript");
+	return (_array[pos]);
+}
+
+template <class T, class Allocator>
+vector<T, Allocator>::const_reference vector<T, Allocator>::at( size_type pos ) const {
+	if (pos >= _size)
+		throw std::out_of_range("invalid vector subscript");
+	return (_array[pos]);
+}
+
+template <class T, class Allocator>
+void vector<T, Allocator>::reserve( size_type new_cap ) {
+	if (new_cap <= _capacity)
+		return ;
+	T *newarr = reinterpret_cast<T *>(new int8_t[new_cap * sizeof(T)]);
+	size_t i = 0;
+	try {
+		for (size_t i = 0; i < _size; ++i)
+			new (newarr + i) T(_array[i]);
+	}
+	catch(...)
+	{
+		for (size_t j = 0; j < i; ++j)
+			(newarr	+ j)->~T();
+		delete [] reinterpret_cast<int8_t>(newarr);
+		throw;
+	}
+	
+	for (size_t i = 0; i < _size; ++i)
+		(_array + i)->~T();
+	delete reinterpret_cast<int8_t *>(_array);
+	_array = newarr;
+	_capacity = new_cap;
+}
+
+template <class T, class Allocator>
+void vector<T, Allocator>::resize( size_type count, T value = T() ) {
+	if (count > _capacity)
+		reserve (count);
+	for (size_t i = _size; i < count; ++i)
+		new (_array + i) T(value);
+	if (count < _size)
+		_size = count;
+}
+
+template <class T, class Allocator>
+void vector<T, Allocator>::push_back( const T& value ) {
+	if (_capacity == _size)
+		reserve(2 * _size);
+	new (_array + _size) T(value);
+	++_size;
+}
+
+template <class T, class Allocator>
+void vector<T, Allocator>::pop_back() {
+	--_size;
+	(_array + _size)->~T();
+}
 
 #endif
