@@ -128,14 +128,111 @@ template <
 		void swap( vector& other );
 
 	private:
-		T*			_array;
 		size_type	_capacity;
 		size_type	_size;
 		Allocator	_alloc;
+		T*			_array;
 	/*-------------------- NON-MEMBER FUNCTIONS --------------------*/
 
 };
 
+template <class T, class Allocator>
+vector<T, Allocator>::vector() : _capacity(0), _size(0), _alloc(allocator_type()), _array(NULL) {}
+
+template <class T, class Allocator>
+vector<T, Allocator>::vector( const Allocator& alloc ) : _capacity(0), _size(0), _alloc(alloc), _array(NULL) {}
+
+template <class T, class Allocator>
+vector<T, Allocator>::vector(size_type count,
+							const T& value = T(), 
+							const Allocator& alloc = Allocator()) : 
+							_capacity(count), 
+							_size(count),
+							_alloc(alloc) {
+	_array = _alloc.allocate(_capacity);
+	size_type i = 0;
+	try {
+		for (; i < _size; ++i)
+			_alloc.construct(_array + i, value);
+	}
+	catch(...)
+	{
+		for (size_t j = 0; j < i; ++j)
+			_alloc.destroy(_array + j);
+		_alloc.deallocate(_array, _capacity);
+		throw;
+	}
+}
+
+// TODO
+// template < class InputIt >
+// vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() );
+
+template <class T, class Allocator>
+vector<T, Allocator>::	vector( const vector& other ) : _capacity(other._capacity), 
+														_size(other._size), 
+														_alloc(other._alloc) {
+	_array = _alloc.allocate(_capacity);
+	size_type i = 0;
+	try {
+		for (; i < _size; ++i)
+			_alloc.construct(_array + i, other._array[i]);
+	}
+	catch(...)
+	{
+		for (size_type j = 0; j < i; ++j)
+			_alloc.destroy(_array + j);
+		_alloc.deallocate(_array, _capacity);
+		throw;
+	}
+}
+
+template <class T, class Allocator>
+vector<T, Allocator>::~vector() {
+	for (size_type i = 0; i < _size; ++i)
+		_alloc.destroy(_array + i);
+	_alloc.deallocate(_array, _capacity);
+}
+
+template <class T, class Allocator>
+vector<T, Allocator>& vector<T, Allocator>::operator=( const vector& other ) {
+	if (this == &other)
+		return (*this);
+
+	T *newarr = _alloc.allocate(other._capacity);
+	size_type i = 0;
+	try {
+		for (; i < other._size; ++i)
+			_alloc.construct(newarr + i, other._array[i])
+	}
+	catch(...)
+	{
+		for (size_type j = 0; j < i; ++j)
+			_alloc.destroy(newarr + i);
+		_alloc.deallocate(newarr, other._capacity);
+		throw;
+	}
+	
+	for (size_type i = 0; i < _size; ++i)
+		_alloc.destroy(_array + i);
+	_alloc.deallocate(_array, _capacity);
+	
+	_array = newarr;
+	_capacity = other._capacity;
+	_size = other._size;
+	return (*this);
+}
+
+// template <class T, class Allocator>
+// void vector<T, Allocator>::assign( size_type count, const T& value ) {
+// 	size_type	i = 0;
+// 	if (count > _capacity)
+// 	{
+// 		for (; i < _size; ++i)
+// 			_alloc.destroy(_array + i);
+// 		_alloc.deallocate(_array, _capacity);
+// 	}
+// }
 
 /*----------------------------------------  Element access ----------------------------------------*/
 template <class T, class Allocator>
