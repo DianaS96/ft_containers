@@ -4,12 +4,15 @@
 #include <memory>
 #include <exception>
 #include <stdexcept> 
+#include <stack>
 
 /* SOURCES OF INFO:
 ** 1) https://www.youtube.com/watch?v=_wE7JYfcKN0
 ** 2) https://en.cppreference.com/w/cpp/container/vector
 ** 3) https://cplusplus.com/reference/vector/vector/?kw=vector
 */
+
+namespace ft {
 
 template <
     class T,
@@ -18,7 +21,7 @@ template <
 {
 	public:
 	/*-------------------- MEMBER TYPES --------------------*/
-		typedef Т										value_type;
+		typedef T										value_type;
 		typedef Allocator								allocator_type;
 		typedef std::ptrdiff_t							difference_type;
 		typedef std::size_t								size_type;
@@ -40,7 +43,7 @@ template <
 		explicit vector( const Allocator& alloc );
 		/*  Constructs the container with count copies of elements with value value. */
 		explicit vector( size_type count,
-					const T& value = T(),
+					const T& value,
 					const Allocator& alloc = Allocator());
 		/* Constructs the container with the contents of the range [first, last). */
 		template < class InputIt >
@@ -122,8 +125,8 @@ template <
 		/* Removes the last element of the container. */
 		void pop_back();
 		/* Resizes the container to contain count elements. */
-		void resize( size_type count );
-		void resize( size_type count, T value = T() );
+		// void resize( size_type count );
+		void resize( size_type count, T value );
 		/* Exchanges the contents of the container with those of other. */
 		void swap( vector& other );
 
@@ -144,8 +147,8 @@ vector<T, Allocator>::vector( const Allocator& alloc ) : _capacity(0), _size(0),
 
 template <class T, class Allocator>
 vector<T, Allocator>::vector(size_type count,
-							const T& value = T(), 
-							const Allocator& alloc = Allocator()) : 
+							const T& value, 
+							const Allocator& alloc) : 
 							_capacity(count), 
 							_size(count),
 							_alloc(alloc) {
@@ -203,7 +206,7 @@ vector<T, Allocator>& vector<T, Allocator>::operator=( const vector& other ) {
 	size_type i = 0;
 	try {
 		for (; i < other._size; ++i)
-			_alloc.construct(newarr + i, other._array[i])
+			_alloc.construct(newarr + i, other._array[i]);
 	}
 	catch(...)
 	{
@@ -236,33 +239,33 @@ vector<T, Allocator>& vector<T, Allocator>::operator=( const vector& other ) {
 
 /*----------------------------------------  Element access ----------------------------------------*/
 template <class T, class Allocator>
-vector<T, Allocator>::reference vector<T, Allocator>::at( size_type pos ) {
+typename vector<T, Allocator>::reference vector<T, Allocator>::at( size_type pos ) {
 	if (pos >= _size)
 		throw std::out_of_range("invalid vector subscript");
 	return (_array[pos]);
 }
 
 template <class T, class Allocator>
-vector<T, Allocator>::const_reference vector<T, Allocator>::at( size_type pos ) const {
+typename vector<T, Allocator>::const_reference vector<T, Allocator>::at( size_type pos ) const {
 	if (pos >= _size)
 		throw std::out_of_range("invalid vector subscript");
 	return (_array[pos]);
 }
 
 template <class T, class Allocator>
-vector<T, Allocator>::reference vector<T, Allocator>::operator[]( size_type pos ) {
-	return (_array[pos])
+typename vector<T, Allocator>::reference vector<T, Allocator>::operator[]( size_type pos ) {
+	return (_array[pos]);
 }
 
 template <class T, class Allocator>
-vector<T, Allocator>::const_reference vector<T, Allocator>::operator[]( size_type pos ) const {
-	return (_array[pos])
+typename vector<T, Allocator>::const_reference vector<T, Allocator>::operator[]( size_type pos ) const {
+	return (_array[pos]);
 }
 
 
 /*---------------------------------------- Capacity ----------------------------------------*/
 template <class T, class Allocator>
-vector<T, Allocator>::size_type vector<T, Allocator>::size() const {
+typename vector<T, Allocator>::size_type vector<T, Allocator>::size() const {
 	return (_size);
 }
 
@@ -275,7 +278,7 @@ void vector<T, Allocator>::reserve( size_type new_cap ) {
 	size_t i = 0;
 	try {
 		for (; i < _size; ++i)
-			_alloc.construct(newarr + i, _array[i])
+			_alloc.construct(newarr + i, _array[i]);
 		// new (newarr + i) T(_array[i]);
 	}
 	catch(...)
@@ -291,20 +294,20 @@ void vector<T, Allocator>::reserve( size_type new_cap ) {
 	for (size_t i = 0; i < _size; ++i)
 		_alloc.destroy(_array + i);
 	// (_array + i)->~T();
-	_alloc.deallocate(arr, _capacity);
+	_alloc.deallocate(_array, _capacity);
 	// delete reinterpret_cast<int8_t *>(_array);
 	_array = newarr;
 	_capacity = new_cap;
 }
 
 template <class T, class Allocator>
-vector<T, Allocator>::size_type vector<T, Allocator>::capacity() const {
+typename vector<T, Allocator>::size_type vector<T, Allocator>::capacity() const {
 	return (_capacity);
 }
 
 /*---------------------------------------- Modifiers ----------------------------------------*/
 template <class T, class Allocator>
-void vector<T, Allocator>::resize( size_type count, T value = T() ) {
+void vector<T, Allocator>::resize( size_type count, T value ) {
 	if (count < _capacity)
 		reserve (count);
 	for (size_t i = _size; i < count; ++i)
@@ -315,9 +318,34 @@ void vector<T, Allocator>::resize( size_type count, T value = T() ) {
 
 template <class T, class Allocator>
 void vector<T, Allocator>::push_back( const T& value ) {
-	if (_capacity == _size)
-		reserve(2 * _size);
-	new (_array + _size) T(value);
+	if (_capacity == 0)
+	{
+		_alloc.deallocate(_array, _capacity);
+		_array = _alloc.allocate(1);
+		_capacity = 1;
+	}
+	else if (_size == _capacity)
+	{
+		T *newarr = _alloc.allocate(_capacity * 2);
+		size_t i = 0;
+		try {
+			for (; i < _size; ++i)
+				_alloc.construct(newarr + i, _array[i]);
+		}
+		catch(...)
+		{
+			for (size_t j = 0; j < i; ++j)
+				_alloc.destroy(newarr + i);
+			_alloc.deallocate(newarr, _capacity * 2);
+			throw;
+		}
+		for (size_t j = 0; j < _size; ++j)
+				_alloc.destroy(_array + i);
+			_alloc.deallocate(_array, _capacity);
+		_array = newarr;
+		_capacity = _capacity * 2;
+	}
+	_alloc.construct(_array + _size, value);
 	++_size;
 }
 
@@ -325,6 +353,8 @@ template <class T, class Allocator>
 void vector<T, Allocator>::pop_back() {
 	--_size;
 	(_array + _size)->~T();
+}
+
 }
 
 #endif
