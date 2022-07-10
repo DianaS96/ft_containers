@@ -128,7 +128,6 @@ template <
 		// void resize( size_type count );
 		void resize( size_type count, T value );
 		/* Exchanges the contents of the container with those of other. */
-		void swap( vector& other );
 
 	private:
 		size_type	_capacity;
@@ -237,6 +236,7 @@ vector<T, Allocator>& vector<T, Allocator>::operator=( const vector& other ) {
 // 	}
 // }
 
+
 /*----------------------------------------  Element access ----------------------------------------*/
 template <class T, class Allocator>
 typename vector<T, Allocator>::reference vector<T, Allocator>::at( size_type pos ) {
@@ -262,6 +262,36 @@ typename vector<T, Allocator>::const_reference vector<T, Allocator>::operator[](
 	return (_array[pos]);
 }
 
+template <class T, class Allocator>
+typename vector<T, Allocator>::reference vector<T, Allocator>::front() {
+	return (_array[0]);
+}
+
+template <class T, class Allocator>
+typename vector<T, Allocator>::const_reference vector<T, Allocator>::front() const {
+	return (_array[0]);
+}
+
+template <class T, class Allocator>
+typename vector<T, Allocator>::reference vector<T, Allocator>::back() {
+	return (_array[_size - 1]);
+}
+
+template <class T, class Allocator>
+typename vector<T, Allocator>::const_reference vector<T, Allocator>::back() const {
+	return (_array[_size - 1]);
+}
+
+template <class T, class Allocator>
+T* vector<T, Allocator>::data() {
+	return (_array);
+}
+
+template <class T, class Allocator>
+const T* vector<T, Allocator>::data() const {
+	return (_array);
+}
+
 
 /*---------------------------------------- Capacity ----------------------------------------*/
 template <class T, class Allocator>
@@ -274,28 +304,22 @@ void vector<T, Allocator>::reserve( size_type new_cap ) {
 	if (new_cap <= _capacity)
 		return ;
 	T *newarr = _alloc.allocate(new_cap);
-	// T *newarr = reinterpret_cast<T *>(new int8_t[new_cap * sizeof(T)]);
 	size_t i = 0;
 	try {
 		for (; i < _size; ++i)
 			_alloc.construct(newarr + i, _array[i]);
-		// new (newarr + i) T(_array[i]);
 	}
 	catch(...)
 	{
 		for (size_t j = 0; j < i; ++j)
 			_alloc.destroy(newarr + i);
-		// (newarr	+ j)->~T();
 		_alloc.deallocate(newarr, new_cap);
-		// delete [] reinterpret_cast<int8_t>(newarr);
 		throw;
 	}
 	
 	for (size_t i = 0; i < _size; ++i)
 		_alloc.destroy(_array + i);
-	// (_array + i)->~T();
 	_alloc.deallocate(_array, _capacity);
-	// delete reinterpret_cast<int8_t *>(_array);
 	_array = newarr;
 	_capacity = new_cap;
 }
@@ -305,16 +329,22 @@ typename vector<T, Allocator>::size_type vector<T, Allocator>::capacity() const 
 	return (_capacity);
 }
 
+
 /*---------------------------------------- Modifiers ----------------------------------------*/
+
 template <class T, class Allocator>
-void vector<T, Allocator>::resize( size_type count, T value ) {
-	if (count < _capacity)
-		reserve (count);
-	for (size_t i = _size; i < count; ++i)
-		new (_array + i) T(value);
-	if (count < _size)
-		_size = count;
+void vector<T, Allocator>::clear() {
+	for (size_type i = 0; i < _size; ++i)
+		_alloc.destroy(_array + i);
+	_size = 0;
 }
+
+// iterator insert( iterator pos, const T& value );
+// void insert( iterator pos, size_type count, const T& value );
+// template < class InputIt >
+// void insert( iterator pos, InputIt first, InputIt last );
+// iterator erase( iterator pos );
+// iterator erase( iterator first, iterator last );
 
 template <class T, class Allocator>
 void vector<T, Allocator>::push_back( const T& value ) {
@@ -353,6 +383,32 @@ template <class T, class Allocator>
 void vector<T, Allocator>::pop_back() {
 	--_size;
 	(_array + _size)->~T();
+}
+
+template <class T, class Allocator>
+void vector<T, Allocator>::resize( size_type count, T value ) {
+	size_type i;
+
+	if (count < _size)
+	{
+		for (i = count; i _size; ++i)
+			_alloc.destoy(_array + i);
+	}
+	else
+	{
+		i = _size;
+		try {
+			for (; i < count; ++i)
+				push_back(T);
+		}
+		catch(...)
+		{
+			for (; i > size; --i)
+				_alloc.destroy(_array + i);
+			throw;
+		}
+	}
+	_size = count;
 }
 
 }
