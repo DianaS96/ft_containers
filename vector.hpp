@@ -5,6 +5,8 @@
 #include <exception>
 #include <stdexcept> 
 #include <stack>
+#include <algorithm>
+#include <iterator>
 
 /* SOURCES OF INFO:
 ** 1) https://www.youtube.com/watch?v=_wE7JYfcKN0
@@ -128,6 +130,7 @@ template <
 		// void resize( size_type count );
 		void resize( size_type count, T value );
 		/* Exchanges the contents of the container with those of other. */
+		void swap( vector& other );
 
 	private:
 		size_type	_capacity;
@@ -391,7 +394,7 @@ void vector<T, Allocator>::resize( size_type count, T value ) {
 
 	if (count < _size)
 	{
-		for (i = count; i _size; ++i)
+		for (i = count; i < _size; ++i)
 			_alloc.destoy(_array + i);
 	}
 	else
@@ -399,7 +402,7 @@ void vector<T, Allocator>::resize( size_type count, T value ) {
 		i = _size;
 		try {
 			for (; i < count; ++i)
-				push_back(T);
+				push_back(value);
 		}
 		catch(...)
 		{
@@ -410,6 +413,13 @@ void vector<T, Allocator>::resize( size_type count, T value ) {
 	}
 	_size = count;
 }
+
+template <class T, class Allocator>
+void vector<T, Allocator>::swap( vector& other ) {
+	std::swap(_size, other._size);
+	std::swap(_capacity, other._capacity);
+	std::swap(_array, other._array);
+}	
 
 }
 
