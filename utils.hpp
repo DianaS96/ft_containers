@@ -1,7 +1,13 @@
 #ifndef UTILS_HPP
 # define UTILS_HPP
 
+# include <memory>
+# include <exception>
+# include <stdexcept> 
+# include <stack>
+# include <algorithm>
 # include <iterator>
+
 namespace ft {
 
 /*---------------------- Base class that provides some member types ----------------------*/

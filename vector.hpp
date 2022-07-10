@@ -1,12 +1,7 @@
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
 
-#include <memory>
-#include <exception>
-#include <stdexcept> 
-#include <stack>
-#include <algorithm>
-#include <iterator>
+# include "utils.hpp"
 
 /* SOURCES OF INFO:
 ** 1) https://www.youtube.com/watch?v=_wE7JYfcKN0
