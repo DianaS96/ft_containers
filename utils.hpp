@@ -1,6 +1,7 @@
 #ifndef UTILS_HPP
 # define UTILS_HPP
 
+# include <iterator>
 namespace ft {
 
 /*---------------------- Base class that provides some member types ----------------------*/
@@ -13,10 +14,11 @@ template<
 > struct iterator {
 	typedef	Category    iterator_category;
 	typedef	T           value_type;
-	typedef	Distance    difference_type;
-	typedef Pointer     pointer;
-	typedef	Reference   reference;
-}
+	/* Distance - Type that can be used to identify distance between iterators. */
+	typedef	Distance	difference_type;
+	typedef Pointer		pointer;
+	typedef	Reference	reference;
+};
 
 /*-------------------------------- Iterator category tags --------------------------------*/
 struct input_iterator_tag { };
@@ -29,11 +31,11 @@ struct contiguous_iterator_tag: public random_access_iterator_tag { };
 /*------------------------------------ Iterator traits -----------------------------------*/
 template< class Iter >
 struct iterator_traits {
-	typedef	Iter::difference_type   difference_type;
-	typedef Iter::value_type        value_type;
-	typedef	Iter::pointer			pointer;
-	typedef Iter::reference			reference;
-	typedef Iter::iterator_category	iterator_category;
+	typedef	typename Iter::difference_type		difference_type;
+	typedef typename Iter::value_type			value_type;
+	typedef	typename Iter::pointer				pointer;
+	typedef typename Iter::reference			reference;
+	typedef typename Iter::iterator_category	iterator_category;
 };
 
 template< class T >
