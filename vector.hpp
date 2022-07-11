@@ -28,11 +28,10 @@ template <
 		typedef typename allocator_type::pointer		pointer;
 		typedef typename allocator_type::const_pointer	const_pointer;
 
-		typedef class ft::random_access_iterator<T>			iterator;
-		typedef class ft::random_access_iterator<const T>	const_iterator;
-		// reverse_iterator
-		// const_reverse_iterator
-
+		typedef class ft::random_access_iterator<T>				iterator;
+		typedef class ft::random_access_iterator<const T>		const_iterator;
+		typedef class ft::rev_random_access_iterator<T>			reverse_iterator;
+		typedef class ft::rev_random_access_iterator<const T>	const_reverse_iterator;
 
 	/*-------------------- MEMBER FUNCTIONS --------------------*/
 		/* Default constructor. Constructs an empty container with a default-constructed allocator. */
@@ -84,14 +83,13 @@ template <
 
 		/*-------------------- Iterators --------------------*/
 		iterator begin();
-		const_iterator begin() const;
 		iterator end();
+		const_iterator begin() const;
 		const_iterator end() const;
-		// reverse_iterator rbegin();
-		// const_reverse_iterator rbegin() const;
-		// reverse_iterator rend();
-		// const_reverse_iterator rend() const;
-
+		reverse_iterator rbegin();
+		reverse_iterator rend();
+		const_reverse_iterator rbegin() const;
+		const_reverse_iterator rend() const;
 
 		/*-------------------- Capacity --------------------*/
 		/* Checks if the container has no elements, i.e. whether begin() == end(). */
@@ -448,10 +446,6 @@ template <class T, class Allocator>
 typename vector<T, Allocator>::iterator vector<T, Allocator>::begin() {
 	return iterator(_array);
 }
-template <class T, class Allocator>
-typename vector<T, Allocator>::const_iterator vector<T, Allocator>::begin() const {
-	return const_iterator(_array);
-}
 
 template <class T, class Allocator>
 typename vector<T, Allocator>::iterator vector<T, Allocator>::end() {
@@ -459,9 +453,39 @@ typename vector<T, Allocator>::iterator vector<T, Allocator>::end() {
 }
 
 template <class T, class Allocator>
+typename vector<T, Allocator>::const_iterator vector<T, Allocator>::begin() const {
+	return const_iterator(_array);
+}
+
+template <class T, class Allocator>
 typename vector<T, Allocator>::const_iterator vector<T, Allocator>::end() const {
 	return const_iterator(_array + _size);
 }
+
+template <class T, class Allocator>
+typename vector<T, Allocator>::reverse_iterator vector<T, Allocator>::rbegin() {
+	return reverse_iterator(this->end());
+}
+
+template <class T, class Allocator>
+typename vector<T, Allocator>::reverse_iterator vector<T, Allocator>::rend() {
+	return reverse_iterator(this->begin());
+}
+
+template <class T, class Allocator>
+typename vector<T, Allocator>::const_reverse_iterator vector<T, Allocator>::rbegin() const {
+	return v(this->end());
+}
+
+template <class T, class Allocator>
+typename vector<T, Allocator>::const_reverse_iterator vector<T, Allocator>::rend() const {
+	return const_reverse_iterator(this->begin());
+}
+
+
+		// reverse_iterator end();
+		// const_reverse_iterator begin();
+		// const_reverse_iterator end();
 
 }
 
