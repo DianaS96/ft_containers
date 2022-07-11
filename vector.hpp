@@ -102,9 +102,6 @@ template <
 		void reserve( size_type new_cap );
 		/* Returns the number of elements that the container has currently allocated space for. */
 		size_type capacity() const;
-		/* Requests the removal of unused capacity. */
-		void shrink_to_fit();
-
 
 		/*-------------------- Modifiers --------------------*/
 		/* Erases all elements from the container. After this call, size() returns zero. */
@@ -259,6 +256,10 @@ vector<T, Allocator>& vector<T, Allocator>::operator=( const vector& other ) {
 // 	}
 // }
 
+template <class T, class Allocator>
+typename vector<T, Allocator>::allocator_type vector<T, Allocator>::get_allocator() const {
+	return (_alloc);
+}
 
 /*----------------------------------------  Element access ----------------------------------------*/
 template <class T, class Allocator>
@@ -317,9 +318,21 @@ const T* vector<T, Allocator>::data() const {
 
 
 /*---------------------------------------- Capacity ----------------------------------------*/
+
+template <class T, class Allocator>
+bool vector<T, Allocator>::empty() const {
+	return (_size == 0);
+}
+
 template <class T, class Allocator>
 typename vector<T, Allocator>::size_type vector<T, Allocator>::size() const {
 	return (_size);
+}
+
+// https://en.cppreference.com/w/cpp/container/vector/max_size
+template <class T, class Allocator>
+typename vector<T, Allocator>::size_type vector<T, Allocator>::max_size() const {
+	return (std::numeric_limits<size_type>::max() / sizeof(size_type));
 }
 
 template <class T, class Allocator>
@@ -362,12 +375,44 @@ void vector<T, Allocator>::clear() {
 	_size = 0;
 }
 
-// iterator insert( iterator pos, const T& value );
-// void insert( iterator pos, size_type count, const T& value );
-// template < class InputIt >
-// void insert( iterator pos, InputIt first, InputIt last );
-// iterator erase( iterator pos );
-// iterator erase( iterator first, iterator last );
+/* Inserts value before pos */
+template <class T, class Allocator>
+typename vector<T, Allocator>::iterator vector<T, Allocator>::insert( typename vector<T, Allocator>::iterator pos, 
+																	const typename vector<T, Allocator>::value_type & value ) {
+	size_type	pos_idx = 0;
+
+	for (iterator it = begin(); it != pos; ++it, ++pos_idx)
+	if (!_capacity)
+		reserve(1);
+	if (_size == _capacity)
+		reserve(_capacity * 2);
+	for (size_type i = _size; i > pos_idx; --i) {
+		_alloc.destroy(_array + i);
+		_alloc.construct(_array + i, _array[i - 1]);
+	}
+	_alloc.destroy(_array + pos_idx);
+	_alloc.construct(_array + pos_idx, value);
+	++_size;
+	return iterator(_array + pos_idx);
+}
+
+		// iterator insert( iterator pos, const T& value );
+		// void insert( iterator pos, size_type count, const T& value );
+		// template < class InputIt >
+		// void insert( iterator pos, InputIt first, InputIt last );
+		// /* Erases the specified elements from the container. */
+		// iterator erase( iterator pos );
+		// iterator erase( iterator first, iterator last );
+		// /* Appends the given element value to the end of the container. */
+		// void push_back( const T& value );
+		// /* Removes the last element of the container. */
+		// void pop_back();
+		// /* Resizes the container to contain count elements. */
+		// // void resize( size_type count );
+		// void resize( size_type count, T value );
+		// /* Exchanges the contents of the container with those of other. */
+		// void swap( vector& other );
+
 
 template <class T, class Allocator>
 void vector<T, Allocator>::push_back( const T& value ) {
@@ -481,11 +526,6 @@ template <class T, class Allocator>
 typename vector<T, Allocator>::const_reverse_iterator vector<T, Allocator>::rend() const {
 	return const_reverse_iterator(this->begin());
 }
-
-
-		// reverse_iterator end();
-		// const_reverse_iterator begin();
-		// const_reverse_iterator end();
 
 }
 

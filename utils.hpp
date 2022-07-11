@@ -35,6 +35,7 @@ struct random_access_iterator_tag : public bidirectional_iterator_tag { };
 struct contiguous_iterator_tag: public random_access_iterator_tag { };
 
 /*------------------------------------ Iterator traits -----------------------------------*/
+
 template< class Iter >
 struct iterator_traits {
 	typedef	typename Iter::difference_type		difference_type;

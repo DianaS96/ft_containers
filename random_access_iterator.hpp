@@ -17,13 +17,13 @@ class random_access_iterator : public ft::iterator<typename ft::iterator_traits<
 private:
 	/* data */
 public:
-	typedef Iterator												iterator_type;
-	typedef typename ft::iterator_traits<Iterator>::value_type		value_type;
-	typedef typename ft::iterator_traits<Iterator>::difference_type	difference_type;
-	typedef typename ft::iterator_traits<Iterator>::pointer			pointer;
-	typedef typename ft::iterator_traits<Iterator>::reference		reference;
+	typedef typename ft::iterator_traits<Iterator *>::pointer					iterator_type;
+	typedef typename ft::iterator_traits<Iterator *>::value_type		value_type;
+	typedef typename ft::iterator_traits<Iterator *>::difference_type	difference_type;
+	typedef typename ft::iterator_traits<Iterator *>::pointer			pointer;
+	typedef typename ft::iterator_traits<Iterator *>::reference		reference;
 
-	random_access_iterator() : current() {}
+	random_access_iterator() : current(NULL) {}
 	random_access_iterator(iterator_type _x) : current(_x) {}
 	random_access_iterator(const random_access_iterator& _x) : current(_x.current) {}
 	random_access_iterator &operator=(const random_access_iterator& _x) {
@@ -75,7 +75,7 @@ public:
 	random_access_iterator &operator-(difference_type n) const {random_access_iterator(current - n);}
 
 protected:
-	Iterator	current;
+	iterator_type	current;
 };
 
 /*--------------------------------------- rev_random_access_iterator ---------------------------------------*/
