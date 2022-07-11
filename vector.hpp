@@ -28,10 +28,10 @@ template <
 		typedef typename allocator_type::pointer		pointer;
 		typedef typename allocator_type::const_pointer	const_pointer;
 
-		typedef class ft::random_access_iterator<T>				iterator;
-		typedef class ft::random_access_iterator<const T>		const_iterator;
-		typedef class ft::rev_random_access_iterator<T>			reverse_iterator;
-		typedef class ft::rev_random_access_iterator<const T>	const_reverse_iterator;
+		typedef ft::random_access_iterator<T>				iterator;
+		typedef ft::random_access_iterator<const T>		const_iterator;
+		typedef ft::rev_random_access_iterator<T>			reverse_iterator;
+		typedef ft::rev_random_access_iterator<const T>	const_reverse_iterator;
 
 	/*-------------------- MEMBER FUNCTIONS --------------------*/
 		/* Default constructor. Constructs an empty container with a default-constructed allocator. */

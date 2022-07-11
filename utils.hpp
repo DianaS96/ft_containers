@@ -16,8 +16,8 @@ template<
 	class T,
 	class Distance = std::ptrdiff_t,
 	class Pointer = T*,
-	class Reference = T&
-> struct iterator {
+	class Reference = T&> 
+	struct iterator {
 	typedef	Category    iterator_category;
 	typedef	T           value_type;
 	/* Distance - Type that can be used to identify distance between iterators. */
