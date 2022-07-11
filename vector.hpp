@@ -2,7 +2,8 @@
 # define VECTOR_HPP
 
 # include "utils.hpp"
-
+# include "random_access_iterator.hpp"
+#include <type_traits>
 /* SOURCES OF INFO:
 ** 1) https://www.youtube.com/watch?v=_wE7JYfcKN0
 ** 2) https://en.cppreference.com/w/cpp/container/vector
@@ -27,8 +28,8 @@ template <
 		typedef typename allocator_type::pointer		pointer;
 		typedef typename allocator_type::const_pointer	const_pointer;
 
-		class	iterator;
-		class	const_iterator;
+		typedef class ft::random_access_iterator<T>			iterator;
+		typedef class ft::random_access_iterator<const T>	const_iterator;
 		// reverse_iterator
 		// const_reverse_iterator
 
@@ -44,7 +45,8 @@ template <
 					const Allocator& alloc = Allocator());
 		/* Constructs the container with the contents of the range [first, last). */
 		template < class InputIt >
-		vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() );
+		vector( typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, 
+				InputIt last, const Allocator& alloc = Allocator() );
 		/* Copy constructor. Constructs the container with the copy of the contents of other. */
 		vector( const vector& other );
 
@@ -164,10 +166,35 @@ vector<T, Allocator>::vector(size_type count,
 	}
 }
 
-// TODO
-// template < class InputIt >
-// vector( InputIt first, InputIt last, const Allocator& alloc = Allocator() );
+template <class T, class Allocator>
+template < class InputIt >
+vector<T, Allocator>::vector( typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, 
+							InputIt last, const Allocator& alloc ) : 
+							_capacity(0), _size(0), _alloc(alloc), _array(NULL) {
+	size_type	i;
+	InputIt		tmp(first);
 
+	_size = 0;
+	while (*tmp != *last)
+	{
+		tmp++;
+		_size++;
+	}
+	_capacity = _size;
+	_array = _alloc.allocate(_capacity);
+	try {
+		for (i = 0; *first != *last; ++i, first++)
+			_alloc.construct(_array + i, *first);
+	}
+	catch(...)
+	{
+		for (size_type j = 0; j < i; ++j)
+			_alloc.destroy(_array + j);
+		_alloc.deallocate(_array, _capacity);
+		throw;
+	}
+}
+				
 template <class T, class Allocator>
 vector<T, Allocator>::	vector( const vector& other ) : _capacity(other._capacity), 
 														_size(other._size), 
@@ -415,6 +442,26 @@ void vector<T, Allocator>::swap( vector& other ) {
 	std::swap(_capacity, other._capacity);
 	std::swap(_array, other._array);
 }	
+
+/*---------------------------------------- Iterators ----------------------------------------*/
+template <class T, class Allocator>
+typename vector<T, Allocator>::iterator vector<T, Allocator>::begin() {
+	return iterator(_array);
+}
+template <class T, class Allocator>
+typename vector<T, Allocator>::const_iterator vector<T, Allocator>::begin() const {
+	return const_iterator(_array);
+}
+
+template <class T, class Allocator>
+typename vector<T, Allocator>::iterator vector<T, Allocator>::end() {
+	return iterator(_array + _size);
+}
+
+template <class T, class Allocator>
+typename vector<T, Allocator>::const_iterator vector<T, Allocator>::end() const {
+	return const_iterator(_array + _size);
+}
 
 }
 

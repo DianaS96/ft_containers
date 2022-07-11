@@ -62,6 +62,28 @@ struct iterator_traits<const T*> {
 	typedef random_access_iterator_tag	iterator_category;
 };
 
+/*------------------------- enable_if -------------------------*/
+template<bool B, class T = void>
+struct enable_if {};
+
+template<class T>
+struct enable_if<true, T> { typedef T type; };
+
+/*------------------------- is_iterator -------------------------*/
+template<class T>
+struct is_iterator {
+private:
+	template<class C>
+	static typename C::iterator_category f(int a) {
+		(void)a;
+		return C::iterator_category();
+	}
+	template <class C>
+	static double f(...) {return 0;};
+public:	
+	static const bool value = sizeof(f<T>(1)) != sizeof(double);
+};
+
 }
 
 #endif

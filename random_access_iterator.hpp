@@ -4,6 +4,8 @@
 /*https://code.woboq.org/gcc/libstdc++-v3/include/bits/stl_iterator.h.html#_ZNKSt16reverse_iteratorptEv*/
 # include "utils.hpp"
 
+namespace ft {
+
 template <class Iterator>
 class random_access_iterator : public ft::iterator<typename ft::iterator_traits<Iterator>::iterator_category, 
 													typename ft::iterator_traits<Iterator>::value_type,
@@ -37,8 +39,44 @@ public:
 	bool operator>=(random_access_iterator& _x) {return (current >= _x.current);}
 	bool operator<(random_access_iterator& _x) {return (current < _x.current);}
 	bool operator<=(random_access_iterator& _x) {return (current == _x.current);}
+	
+	reference operator*() const {return (*this->current);}
+	pointer operator->() const {return (&current);}
+	random_access_iterator &operator++() {
+		++current;
+		return (*this);
+	}
+	random_access_iterator operator++(int) {
+		random_access_iterator tmp = *this;
+		++current;
+		return (tmp);
+	}
+	random_access_iterator &operator--() {
+		--current;
+		return (*this);
+	}
+	random_access_iterator operator--(int) {
+		random_access_iterator tmp = *this;
+		--current;
+		return (tmp);
+	}
+
+	reference operator[](difference_type n) const {return (current[n]);}
+	random_access_iterator &operator+=(difference_type n) const {
+		current += n;
+		return (*this);
+		}
+	random_access_iterator &operator-=(difference_type n) const {
+		current -= n;
+		return (*this);
+		}
+	random_access_iterator &operator+(difference_type n) const {random_access_iterator(current + n);}
+	random_access_iterator &operator-(difference_type n) const {random_access_iterator(current - n);}
+
 protected:
 	Iterator	current;
 };
+
+}
 
 #endif
