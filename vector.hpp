@@ -377,23 +377,7 @@ void vector<T, Allocator>::clear() {
 
 /* Inserts value before pos */
 template <class T, class Allocator>
-typename vector<T, Allocator>::iterator vector<T, Allocator>::insert( typename vector<T, Allocator>::iterator pos, 
-																	const typename vector<T, Allocator>::value_type & value ) {
-	// size_type indexToInsert = 0;
-	// 			for (iterator it = begin(); it != pos; ++it, ++indexToInsert);
-	// 			if (!_capacity)
-	// 				reserve(1);
-	// 			if (_size == _capacity)
-	// 				reserve(_capacity * 2);
-	// 			for (size_type i = _size; i > indexToInsert; --i) {
-	// 				_alloc.destroy(_array + i);
-	// 				_alloc.construct(_array + i, _array[i - 1]);
-	// 			}
-	// 			_alloc.destroy(_array + indexToInsert);
-	// 			_alloc.construct(_array + indexToInsert, value);
-	// 			++_size;
-	// 			return iterator(_array + indexToInsert);
-
+typename vector<T, Allocator>::iterator vector<T, Allocator>::insert( iterator pos, const T& value ) {
 	size_type	pos_idx = 0;
 	size_type	i = 0;
 
@@ -439,6 +423,7 @@ typename vector<T, Allocator>::iterator vector<T, Allocator>::insert( typename v
 		_alloc.deallocate(newarr, _capacity);
 		throw;
 	}
+	// Destroy _array and then make _array equal newarr.
 	for (i = 0; i < _size; ++i)
 		_alloc.destroy(_array + i);
 	_alloc.deallocate(_array, _capacity);
@@ -447,7 +432,59 @@ typename vector<T, Allocator>::iterator vector<T, Allocator>::insert( typename v
 	return iterator(_array + pos_idx);
 }
 
-		// iterator insert( iterator pos, const T& value );
+template <class T, class Allocator>
+void vector<T, Allocator>::insert( iterator pos, size_type count, const T& value ) {
+	size_type	pos_idx = 0;
+	size_type	i = 0;
+
+	for (iterator it = begin(); it != pos; ++it, ++pos_idx);
+	if (_size + count > _capacity)
+		reserve(_size + count);
+	// Create tmp array and fill it with all elements from _array until pos.
+	T *newarr = _alloc.allocate(_capacity);
+	try {
+		for (i = 0; i < pos_idx; ++i)
+			_alloc.construct(newarr + i, _array[i]);
+	}
+	catch(...)
+	{
+		for (size_t j = 0; j < i; ++j)
+			_alloc.destroy(newarr + i);
+		_alloc.deallocate(newarr, _capacity);
+		throw;
+	}
+	// Fill tmp array with (count times) value given in function's parameters.
+	try {
+		for (size_type j = 0; j < count; ++j, ++i)
+			_alloc.construct(newarr + i, value);
+	}
+	catch(...)
+	{
+		for (size_t j = 0; j < i; ++j)
+			_alloc.destroy(newarr + i);
+		_alloc.deallocate(newarr, _capacity);
+		throw;
+	}
+	// Fill tmp array with values from _array (after pos).
+	try {
+		for (; pos_idx < _size; ++pos_idx, ++i)
+			_alloc.construct(newarr + i, _array[pos_idx]);
+	}
+	catch(...)
+	{
+		for (size_t j = 0; j < i; ++j)
+			_alloc.destroy(newarr + i);
+		_alloc.deallocate(newarr, _capacity);
+		throw;
+	}
+	// Destroy _array and then make _array equal newarr.
+	for (i = 0; i < _size; ++i)
+		_alloc.destroy(_array + i);
+	_alloc.deallocate(_array, _capacity);
+	_array = newarr;
+	_size += count;
+}
+
 		// void insert( iterator pos, size_type count, const T& value );
 		// template < class InputIt >
 		// void insert( iterator pos, InputIt first, InputIt last );
