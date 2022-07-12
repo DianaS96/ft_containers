@@ -19,13 +19,23 @@
         // std::cout << "back: " << vector_int.back() << std::endl;
         // std::cout << "back: " << vector_int[1] << std::endl;
         std::cout << "----------------Insert----------------" << std::endl;
-        ft::vector<int>::iterator it1 = vector_int.begin();
-        it1++;
-        vector_int.insert(it1, (size_t)3, 10);
+        // ft::vector<int>::iterator it1 = vector_int.begin();
+        // it1++;
+        // vector_int.insert(it1, (size_t)3, 10);
+        // size_t i = 0;
+        // while (i < vector_int.size())
+        // {
+        //     std::cout << vector_int[i] << std::endl;
+        //     i++;
+        // }
+
+        ft::vector<int> vec2;
+        vec2.push_back(1);
+        vec2.insert(vec2.begin(), vector_int.begin(), vector_int.end());
         size_t i = 0;
-        while (i < vector_int.size())
+        while (i < vec2.size())
         {
-            std::cout << vector_int[i] << std::endl;
+            std::cout << vec2[i] << std::endl;
             i++;
         }
 

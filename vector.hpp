@@ -110,7 +110,7 @@ template <
 		iterator insert( iterator pos, const T& value );
 		void insert( iterator pos, size_type count, const T& value );
 		template < class InputIt >
-		void insert( iterator pos, InputIt first, InputIt last );
+		void insert( iterator pos, typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, InputIt last );
 		/* Erases the specified elements from the container. */
 		iterator erase( iterator pos );
 		iterator erase( iterator first, iterator last );
@@ -439,7 +439,12 @@ void vector<T, Allocator>::insert( iterator pos, size_type count, const T& value
 
 	for (iterator it = begin(); it != pos; ++it, ++pos_idx);
 	if (_size + count > _capacity)
-		reserve(_size + count);
+	{
+		if (_capacity * 2 > _size + count)
+			reserve(_capacity * 2);
+		else
+			reserve(_size + count);
+	}
 	// Create tmp array and fill it with all elements from _array until pos.
 	T *newarr = _alloc.allocate(_capacity);
 	try {
@@ -485,9 +490,73 @@ void vector<T, Allocator>::insert( iterator pos, size_type count, const T& value
 	_size += count;
 }
 
-		// void insert( iterator pos, size_type count, const T& value );
-		// template < class InputIt >
-		// void insert( iterator pos, InputIt first, InputIt last );
+template <class T, class Allocator>
+template < class InputIt >
+void vector<T, Allocator>::insert( iterator pos, 
+typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, InputIt last ) {
+	size_type	count = 0;
+	size_type	pos_idx = 0;
+	size_type	new_cap = 0;
+	size_type	i;
+	T			*tmp;
+
+	for (InputIt it = first; it != last; ++it, ++count);
+	printf("Here\n");
+	for (InputIt it = begin(); it != pos; ++it, ++pos_idx);
+	if (_size + count > _capacity)
+	{
+		if (_capacity * 2 > _size + count)
+			new_cap = _capacity * 2;
+		else
+			new_cap = _size + count;
+		// Create tmp array and fill it with all elements from _array until pos.
+		tmp = _alloc.allocate(new_cap);
+		try {
+			for (i = 0; i < pos_idx; ++i)
+				_alloc.construct(tmp + i, _array[i]);
+		}
+		catch(...)
+		{
+			for (size_type j = 0; j < i; ++j)
+				_alloc.destroy(tmp + i);
+			_alloc.deallocate(tmp, new_cap);
+			throw;
+		}
+		// Fill tmp array with values from the given range.
+		try {
+			for (; first < last; ++first, ++i)
+				_alloc.construct(tmp + i, *first);
+		}
+		catch(...)
+		{
+			for (size_t j = 0; j < i; ++j)
+				_alloc.destroy(tmp + i);
+			_alloc.deallocate(tmp, new_cap);
+			throw;
+		}
+		// Fill tmp array with values from _array (after pos).
+		try {
+			for (; pos_idx < _size; ++pos_idx, ++i)
+				_alloc.construct(tmp + i, _array[pos_idx]);
+		}
+		catch(...)
+		{
+			for (size_t j = 0; j < i; ++j)
+				_alloc.destroy(tmp + i);
+			_alloc.deallocate(tmp, new_cap);
+			throw;
+		}
+		// Destroy _array and then make _array equal newarr.
+		for (i = 0; i < _size; ++i)
+			_alloc.destroy(_array + i);
+		_alloc.deallocate(_array, _capacity);
+		_array = tmp;
+		_size += count;
+	}
+
+
+}
+
 		// /* Erases the specified elements from the container. */
 		// iterator erase( iterator pos );
 		// iterator erase( iterator first, iterator last );
