@@ -6,7 +6,7 @@
         ft::vector<int> vector_int;
         vector_int.push_back(1);
         std::cout << vector_int[0] << std::endl;
-        vector_int.push_back(2);
+        // vector_int.push_back(2);
         // std::cout << vector_int[1] << std::endl;
         // std::cout << "front: " << vector_int.front() << std::endl;
         // std::cout << "back: " << vector_int.back() << std::endl;
@@ -30,7 +30,9 @@
         // }
 
         ft::vector<int> vec2;
-        vec2.push_back(1);
+        vec2.push_back(2);
+        vec2.push_back(2);
+        vec2.push_back(2);
         vec2.insert(vec2.begin(), vector_int.begin(), vector_int.end());
         size_t i = 0;
         while (i < vec2.size())

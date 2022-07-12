@@ -509,52 +509,52 @@ typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, In
 			new_cap = _capacity * 2;
 		else
 			new_cap = _size + count;
-		// Create tmp array and fill it with all elements from _array until pos.
-		tmp = _alloc.allocate(new_cap);
-		try {
-			for (i = 0; i < pos_idx; ++i)
-				_alloc.construct(tmp + i, _array[i]);
-		}
-		catch(...)
-		{
-			for (size_type j = 0; j < i; ++j)
-				_alloc.destroy(tmp + i);
-			_alloc.deallocate(tmp, new_cap);
-			throw;
-		}
-		// Fill tmp array with values from the given range.
-		try {
-			for (; first < last; ++first, ++i)
-				_alloc.construct(tmp + i, *first);
-		}
-		catch(...)
-		{
-			for (size_t j = 0; j < i; ++j)
-				_alloc.destroy(tmp + i);
-			_alloc.deallocate(tmp, new_cap);
-			throw;
-		}
-		// Fill tmp array with values from _array (after pos).
-		try {
-			for (; pos_idx < _size; ++pos_idx, ++i)
-				_alloc.construct(tmp + i, _array[pos_idx]);
-		}
-		catch(...)
-		{
-			for (size_t j = 0; j < i; ++j)
-				_alloc.destroy(tmp + i);
-			_alloc.deallocate(tmp, new_cap);
-			throw;
-		}
-		// Destroy _array and then make _array equal newarr.
-		for (i = 0; i < _size; ++i)
-			_alloc.destroy(_array + i);
-		_alloc.deallocate(_array, _capacity);
-		_array = tmp;
-		_size += count;
 	}
-
-
+	else
+		new_cap = _capacity;
+		// Create tmp array and fill it with all elements from _array until pos.
+	tmp = _alloc.allocate(new_cap);
+	try {
+		for (i = 0; i < pos_idx; ++i)
+			_alloc.construct(tmp + i, _array[i]);
+	}
+	catch(...)
+	{
+		for (size_type j = 0; j < i; ++j)
+			_alloc.destroy(tmp + i);
+		_alloc.deallocate(tmp, new_cap);
+		throw;
+	}
+	// Fill tmp array with values from the given range.
+	try {
+		for (; first < last; ++first, ++i)
+			_alloc.construct(tmp + i, *first);
+	}
+		catch(...)
+	{
+		for (size_t j = 0; j < i; ++j)
+			_alloc.destroy(tmp + i);
+		_alloc.deallocate(tmp, new_cap);
+		throw;
+	}
+	// Fill tmp array with values from _array (after pos).
+	try {
+		for (; pos_idx < _size; ++pos_idx, ++i)
+			_alloc.construct(tmp + i, _array[pos_idx]);
+	}
+	catch(...)
+	{
+		for (size_t j = 0; j < i; ++j)
+			_alloc.destroy(tmp + i);
+		_alloc.deallocate(tmp, new_cap);
+		throw;
+	}
+	// Destroy _array and then make _array equal newarr.
+	for (i = 0; i < _size; ++i)
+		_alloc.destroy(_array + i);
+	_alloc.deallocate(_array, _capacity);
+	_array = tmp;
+	_size += count;
 }
 
 		// /* Erases the specified elements from the container. */
