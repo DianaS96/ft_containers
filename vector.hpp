@@ -379,19 +379,70 @@ void vector<T, Allocator>::clear() {
 template <class T, class Allocator>
 typename vector<T, Allocator>::iterator vector<T, Allocator>::insert( typename vector<T, Allocator>::iterator pos, 
 																	const typename vector<T, Allocator>::value_type & value ) {
-	size_type	pos_idx = 0;
+	// size_type indexToInsert = 0;
+	// 			for (iterator it = begin(); it != pos; ++it, ++indexToInsert);
+	// 			if (!_capacity)
+	// 				reserve(1);
+	// 			if (_size == _capacity)
+	// 				reserve(_capacity * 2);
+	// 			for (size_type i = _size; i > indexToInsert; --i) {
+	// 				_alloc.destroy(_array + i);
+	// 				_alloc.construct(_array + i, _array[i - 1]);
+	// 			}
+	// 			_alloc.destroy(_array + indexToInsert);
+	// 			_alloc.construct(_array + indexToInsert, value);
+	// 			++_size;
+	// 			return iterator(_array + indexToInsert);
 
-	for (iterator it = begin(); it != pos; ++it, ++pos_idx)
+	size_type	pos_idx = 0;
+	size_type	i = 0;
+
+	for (iterator it = begin(); it != pos; ++it, ++pos_idx);
 	if (!_capacity)
 		reserve(1);
 	if (_size == _capacity)
 		reserve(_capacity * 2);
-	for (size_type i = _size; i > pos_idx; --i) {
-		_alloc.destroy(_array + i);
-		_alloc.construct(_array + i, _array[i - 1]);
+	// Create tmp array and fill it with all elements from _array until pos.
+	T *newarr = _alloc.allocate(_capacity);
+	try {
+		for (i = 0; i < pos_idx; ++i)
+			_alloc.construct(newarr + i, _array[i]);
 	}
-	_alloc.destroy(_array + pos_idx);
-	_alloc.construct(_array + pos_idx, value);
+	catch(...)
+	{
+		for (size_t j = 0; j < i; ++j)
+			_alloc.destroy(newarr + i);
+		_alloc.deallocate(newarr, _capacity);
+		throw;
+	}
+	// Fill tmp array with value given in function's parameters.
+	try {
+		_alloc.construct(newarr + i, value);
+		i += 1;
+	}
+	catch(...)
+	{
+		for (size_t j = 0; j < i; ++j)
+			_alloc.destroy(newarr + i);
+		_alloc.deallocate(newarr, _capacity);
+		throw;
+	}
+	// Fill tmp array with values from _array (after pos).
+	try {
+		for (; pos_idx < _size; ++pos_idx, ++i)
+			_alloc.construct(newarr + i, _array[pos_idx]);
+	}
+	catch(...)
+	{
+		for (size_t j = 0; j < i; ++j)
+			_alloc.destroy(newarr + i);
+		_alloc.deallocate(newarr, _capacity);
+		throw;
+	}
+	for (i = 0; i < _size; ++i)
+		_alloc.destroy(_array + i);
+	_alloc.deallocate(_array, _capacity);
+	_array = newarr;
 	++_size;
 	return iterator(_array + pos_idx);
 }
