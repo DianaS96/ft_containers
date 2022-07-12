@@ -501,7 +501,6 @@ typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, In
 	T			*tmp;
 
 	for (InputIt it = first; it != last; ++it, ++count);
-	printf("Here\n");
 	for (InputIt it = begin(); it != pos; ++it, ++pos_idx);
 	if (_size + count > _capacity)
 	{
@@ -555,6 +554,40 @@ typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, In
 	_alloc.deallocate(_array, _capacity);
 	_array = tmp;
 	_size += count;
+}
+
+template <class T, class Allocator>
+typename vector<T, Allocator>::iterator vector<T, Allocator>::erase( iterator pos ) {
+	size_type	pos_idx = 0;
+	iterator 	it = begin();
+
+	for (; it != pos; ++it, ++pos_idx);
+	// if (it == end())
+	// {
+	// 	pop_back();
+	// 	return (end());
+	// }
+	for (size_type i = pos_idx; i < _size - 1; ++i) {
+		_alloc.destroy(_array + i);
+		try
+		{
+			_alloc.construct(_array + i, _array[i + 1]);
+		}
+		catch(const std::exception& e) //
+		{
+			// basic guarantee (in this case - destroying everething)
+			for (size_type j = 0; j < i; ++j)
+				_alloc.destroy(_array + j);
+			for (size_type j = i + 1; j < _size; ++j)
+				_alloc.destroy(_array + j);
+			_size = 0;
+			throw;
+		}
+	}
+	// Do not forget to destroy the last element!
+	_alloc.destroy(_array + _size - 1);
+	_size -= 1;
+	return (_array + pos_idx);
 }
 
 		// /* Erases the specified elements from the container. */
@@ -676,7 +709,7 @@ typename vector<T, Allocator>::reverse_iterator vector<T, Allocator>::rend() {
 
 template <class T, class Allocator>
 typename vector<T, Allocator>::const_reverse_iterator vector<T, Allocator>::rbegin() const {
-	return v(this->end());
+	return const_reverse_iterator(this->end());
 }
 
 template <class T, class Allocator>

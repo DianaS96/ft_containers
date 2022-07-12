@@ -31,8 +31,8 @@
 
         ft::vector<int> vec2;
         vec2.push_back(2);
-        vec2.push_back(2);
-        vec2.push_back(2);
+        vec2.push_back(3);
+        vec2.push_back(4);
         vec2.insert(vec2.begin(), vector_int.begin(), vector_int.end());
         size_t i = 0;
         while (i < vec2.size())
@@ -40,6 +40,13 @@
             std::cout << vec2[i] << std::endl;
             i++;
         }
-
+        std::cout << "----------------Erase----------------" << std::endl;
+        vec2.erase(vec2.begin());
+        i = 0;
+        while (i < vec2.size())
+        {
+            std::cout << vec2[i] << std::endl;
+            i++;
+        }
     }
 
