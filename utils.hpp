@@ -86,6 +86,63 @@ public:
 	static const bool value = sizeof(f<T>(1)) != sizeof(double);
 };
 
+/* Pair is a class template that provides a way to store 
+** two heterogeneous objects as a single unit */
+template<class T1, class T2> 
+struct pair
+{
+    /* Member types */
+    typedef T1  first_type;
+    typedef T2  second_type;
+
+    /* Member objects */
+    T1  first;
+    T2  second;
+
+    /* Member functions */
+    pair() : first(T1()), second(T2()) {}
+    pair( const T1& x, const T2& y ) : first(x), second(y) {}
+    template< class U1, class U2 >
+    pair( const pair<U1, U2>& p ) : first(p.first), second(p.second) {}
+
+    pair& operator=( const pair& other ) {
+    	if (this != &other)
+        {
+            first = other.first;
+            second = other.second;
+        }
+        return (*this);
+    }
+};
+
+/* Creates a pair object, deducing the target type from the types of arguments. */
+template< class T1, class T2 >
+pair<T1,T2> make_pair( T1 t, T2 u ) { return ft::pair<T1,T2>(t, u);}
+
+template< class T1, class T2 >
+bool operator==( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs ) {return (lhs.first == rhs.first && lhs.second == rhs.second);}
+
+template< class T1, class T2 >
+bool operator!=( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs ) {return !(lhs == rhs);}
+
+template< class T1, class T2 >
+bool operator<( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs ) {
+	if (lhs.first < lhs.first)
+		return true;
+	if (lhs.first > lhs.first)
+		return false;
+	return (lhs.second < lhs.second);
+}
+
+template< class T1, class T2 >
+bool operator<=( const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs ) {return (lhs.first < rhs.first || lhs.first == lhs.first);}
+
+template< class T1, class T2 >
+bool operator>( const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs ) {return !(lhs <= rhs);}
+
+template< class T1, class T2 >
+bool operator>=( const std::pair<T1,T2>& lhs, const std::pair<T1,T2>& rhs ) {return !(lhs < rhs);}
+
 }
 
 #endif

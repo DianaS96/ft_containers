@@ -112,12 +112,12 @@ public:
 
 	~rev_random_access_iterator() {}
 
-	bool operator==(rev_random_access_iterator& _x) {return (current == _x.current);}
-	bool operator!=(rev_random_access_iterator& _x) {return (current != _x.current);}
-	bool operator>(rev_random_access_iterator& _x) {return (current > _x.current);}
-	bool operator>=(rev_random_access_iterator& _x) {return (current >= _x.current);}
-	bool operator<(rev_random_access_iterator& _x) {return (current < _x.current);}
-	bool operator<=(rev_random_access_iterator& _x) {return (current == _x.current);}
+	bool operator==(const rev_random_access_iterator& _x) {return (current == _x.current);}
+	bool operator!=(const rev_random_access_iterator& _x) {return (current != _x.current);}
+	bool operator>(const rev_random_access_iterator& _x) {return (current > _x.current);}
+	bool operator>=(const rev_random_access_iterator& _x) {return (current >= _x.current);}
+	bool operator<(const rev_random_access_iterator& _x) {return (current < _x.current);}
+	bool operator<=(const rev_random_access_iterator& _x) {return (current <= _x.current);}
 	
 	reference operator*() const {
 		iterator_type	tmp = current;
