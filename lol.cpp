@@ -41,12 +41,34 @@
             i++;
         }
         std::cout << "----------------Erase----------------" << std::endl;
-        vec2.erase(vec2.begin());
+        ft::vector<int>::iterator it1 = vec2.begin();
+        it1++;
+        it1++;
+        it1++;
+        it1++;
+        vec2.erase(it1, vec2.end());
         i = 0;
         while (i < vec2.size())
         {
             std::cout << vec2[i] << std::endl;
             i++;
         }
+        std::cout << "----------------std vec----------------" << std::endl;
+        std::vector<int> v;
+        v.push_back(2);
+        v.push_back(3);
+        v.push_back(4);
+        i = 0;
+        std::vector<int>::iterator it2 = v.begin();
+        it2++;
+        it2++;
+        it2++;
+        v.erase(it2, v.end());
+        while (i < v.size())
+        {
+            std::cout << v[i] << std::endl;
+            i++;
+        }
+
     }
 

@@ -560,9 +560,7 @@ template <class T, class Allocator>
 typename vector<T, Allocator>::iterator vector<T, Allocator>::erase( iterator pos ) {
 	size_type	pos_idx = 0;
 	iterator 	it = begin();
-	size_type idx = pos - begin();
 
-	std::cout << "idx: " << idx << std::endl;
 	for (; it != pos; ++it, ++pos_idx);
 	if (it == end())
 	{
@@ -592,9 +590,38 @@ typename vector<T, Allocator>::iterator vector<T, Allocator>::erase( iterator po
 	return (_array + pos_idx);
 }
 
-		// /* Erases the specified elements from the container. */
-		// iterator erase( iterator pos );
-		// iterator erase( iterator first, iterator last );
+template <class T, class Allocator>
+typename vector<T, Allocator>::iterator vector<T, Allocator>::erase( iterator first, iterator last ) {
+	size_type	idx_first = first - begin();
+	// size_type	idx_last = first - end();
+	size_type	count = last - first;
+	size_type	i;
+
+	// Destroy elements in array in the given range
+	for (i = 0; i < count; ++i)
+		_alloc.destroy(_array + i + count);
+	// Move remaining elements on count cells left
+	for (i = idx_first; i < _size - count; ++i)
+	{
+		try
+		{
+			_alloc.construct(_array + i, _array[i + count]);
+		}
+		catch(...)
+		{
+			// basic guarantee (in this case - destroying everething)
+			for (size_type j = 0; j < i; j++)
+				_alloc.destroy(_array + j);
+			for (size_type j = i + count; j < _size; j++)
+				_alloc.destroy(_array + j);
+			_size = 0;
+		}
+		_alloc.destroy(_array + i + count);	
+	}
+	_size -= count;
+	return iterator(_array + idx_first);
+}
+
 		// /* Appends the given element value to the end of the container. */
 		// void push_back( const T& value );
 		// /* Removes the last element of the container. */
