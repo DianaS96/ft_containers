@@ -56,8 +56,8 @@ template <
 		/* Replaces the contents with count copies of value value */
 		void assign( size_type count, const T& value );
 		/* Replaces the contents with copies of those in the range [first, last). */
-		template < class InputIt >
-		void assign( InputIt first, InputIt last );
+		// template < class InputIt >
+		// void assign( InputIt first, InputIt last );
 
 		/* Returns the allocator associated with the container. */
 		allocator_type get_allocator() const;
@@ -119,7 +119,6 @@ template <
 		/* Removes the last element of the container. */
 		void pop_back();
 		/* Resizes the container to contain count elements. */
-		// void resize( size_type count );
 		void resize( size_type count, T value );
 		/* Exchanges the contents of the container with those of other. */
 		void swap( vector& other );
@@ -244,6 +243,39 @@ vector<T, Allocator>& vector<T, Allocator>::operator=( const vector& other ) {
 	_size = other._size;
 	return (*this);
 }
+
+template <class T, class Allocator>
+void vector<T, Allocator>::assign( size_type count, const T& value ) {
+	size_type	i = 0;
+
+	if (_capacity == 0 )
+		_array = _alloc.allocate(count);
+	for (i = 0; i < _size; i++)
+		_alloc.destroy(_array + i);
+	if (_capacity < count)
+	{
+		_alloc.deallocate(_array, _capacity);
+		_capacity = count;
+		_alloc.allocate(_capacity);
+	}
+	_size = count;
+	for (i = 0; i < _size; ++i)
+	{
+		try
+		{
+			_alloc.construct(_array + i, value);
+		}
+		catch(...)
+		{
+			for (size_type j = 0; j < i; ++j)
+				_alloc.destroy(_array + j);
+			throw;
+		}
+	}
+}
+		// /* Replaces the contents with copies of those in the range [first, last). */
+		// template < class InputIt >
+		// void assign( InputIt first, InputIt last );
 
 // template <class T, class Allocator>
 // void vector<T, Allocator>::assign( size_type count, const T& value ) {
@@ -621,17 +653,6 @@ typename vector<T, Allocator>::iterator vector<T, Allocator>::erase( iterator fi
 	_size -= count;
 	return iterator(_array + idx_first);
 }
-
-		// /* Appends the given element value to the end of the container. */
-		// void push_back( const T& value );
-		// /* Removes the last element of the container. */
-		// void pop_back();
-		// /* Resizes the container to contain count elements. */
-		// // void resize( size_type count );
-		// void resize( size_type count, T value );
-		// /* Exchanges the contents of the container with those of other. */
-		// void swap( vector& other );
-
 
 template <class T, class Allocator>
 void vector<T, Allocator>::push_back( const T& value ) {
