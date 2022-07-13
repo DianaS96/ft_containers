@@ -3,6 +3,9 @@
 #include "vector.hpp"
 #include <iomanip>
 #include <ctime>
+#include <stdio.h>
+#include <sys/time.h>
+
 
 /*fonts color*/
 # define FBLACK		"\033[0;30m"
@@ -21,7 +24,30 @@
 // using std::chrono::duration;
 // using std::chrono::milliseconds;
 
-# define	SIZE	10000
+# define	SIZE	1000
+
+class Timer
+{
+public:
+	static void Start() {
+		gettimeofday(&start, NULL);
+	}
+	static void Stop() {
+		gettimeofday(&end, NULL);
+		res = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
+	}
+	static long getRes() {
+		return res;
+	}
+private:
+	static struct timeval start;
+	static struct timeval end;
+	static long res;
+};
+
+struct timeval Timer::start;
+struct timeval Timer::end;
+long Timer::res;
 
 struct get_data
 {
@@ -112,8 +138,7 @@ int main(void) {
 	std::vector<int> std_vec;
 	ft::vector<int> tmp_ft;
 	std::vector<int> tmp_std;
-	std::clock_t begin;
-	std::clock_t end;
+  	// time_t begin, end;
 	double ms_double_ft, ms_double_std;
 	for (size_t i = 0; i < 20; ++i)
 	{
@@ -122,41 +147,39 @@ int main(void) {
 	}
 	ft_print_head();
 	/*------------------------ push_back ------------------------*/
-	begin = clock();
+	
+	Timer::Start();
 	ft_push_back(ft_vec);
-	end = clock();
-    ms_double_ft = double(end - begin) / CLOCKS_PER_SEC;
-	begin = clock();
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
 	std_push_back(std_vec);
-	end = clock();
-	ms_double_std = double(end - begin) / CLOCKS_PER_SEC;
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	printf("%f, %f\n", ms_double_ft, ms_double_std);
 
 	ft_fill_data("push_back", ms_double_ft, ms_double_std, data);
 	ft_print_stats(ft_vec, std_vec, data);
-	// /*------------------------ assign (count, value) ------------------------*/
-	// t1 = high_resolution_clock::now();
-	// ft_vec.assign(6, 4);
-    // t2 = high_resolution_clock::now();
-    // ms_double_ft = t2 - t1;
-	// t1 = high_resolution_clock::now();
-	// std_vec.assign(6, 4);
-    // t2 = high_resolution_clock::now();
-    // ms_double_std = t2 - t1;
-	// ft_fill_data("assign (count, val)", ms_double_ft, ms_double_std, data);
-	// ft_print_stats(ft_vec, std_vec, data);
+	/*------------------------ assign (count, value) ------------------------*/
+	Timer::Start();
+	ft_vec.assign(6, 4);
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_vec.assign(6, 4);
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	ft_fill_data("assign (count, val)", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data);
 	/*------------------------ assign (it, it) ------------------------*/
-	begin = clock();
-	// ft_vec.assign(tmp_ft.begin(), tmp_ft.end());
-	end = clock();
-	printf("begin: %li\n", begin);
-	printf("end: %li\n", end);
-	ms_double_std = double(end - begin) / CLOCKS_PER_SEC;
-	begin = clock();
+	Timer::Start();
+	ft_vec.assign(tmp_ft.begin(), tmp_ft.end());
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
 	std_vec.assign(tmp_std.begin(), tmp_std.end());
-	end = clock();
-	printf("begin: %li\n", begin);
-	printf("end: %li\n", end);
-	ms_double_std = double(end - begin) / CLOCKS_PER_SEC;
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
 	ft_fill_data("assign (it, it)", ms_double_ft, ms_double_std, data);
 	ft_print_stats(ft_vec, std_vec, data);
 

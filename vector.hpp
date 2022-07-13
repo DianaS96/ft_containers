@@ -252,12 +252,9 @@ void vector<T, Allocator>::assign( size_type count, const T& value ) {
 		_array = _alloc.allocate(count);
 	for (i = 0; i < _size; i++)
 		_alloc.destroy(_array + i);
-	if (_capacity < count)
-	{
-		_alloc.deallocate(_array, _capacity);
-		_capacity = count;
-		_alloc.allocate(_capacity);
-	}
+	_alloc.deallocate(_array, _capacity);
+	_capacity = count;
+	_array = _alloc.allocate(_capacity);
 	_size = count;
 	for (i = 0; i < _size; ++i)
 	{
@@ -282,16 +279,9 @@ void vector<T, Allocator>::assign( typename ft::enable_if<ft::is_iterator<InputI
 
 	for (i = 0; i < _size; ++i)
 		_alloc.destroy(_array + i);
-	if (_capacity < count)
-	{
-		printf("lol1, %lli\n", count);
-		reserve(count);
-		// printf("lol1\n");
-		// _alloc.deallocate(_array, _capacity);
-		// printf("lol\n");
-		// _capacity = count;
-		// _alloc.allocate(_capacity);
-	}
+	_alloc.deallocate(_array, _capacity);
+	_capacity = count;
+	_array = _alloc.allocate(_capacity);
 	_size = count;
 	for (i = 0; i < _size && first != last; ++i, ++first)
 	{
