@@ -7,6 +7,7 @@
 # include <stack>
 # include <algorithm>
 # include <iterator>
+#include <iostream>
 
 namespace ft {
 

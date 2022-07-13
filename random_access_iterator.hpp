@@ -34,12 +34,12 @@ public:
 
 	~random_access_iterator() {}
 
-	bool operator==(random_access_iterator& _x) {return (current == _x.current);}
-	bool operator!=(random_access_iterator& _x) {return (current != _x.current);}
-	bool operator>(random_access_iterator& _x) {return (current > _x.current);}
-	bool operator>=(random_access_iterator& _x) {return (current >= _x.current);}
-	bool operator<(random_access_iterator& _x) {return (current < _x.current);}
-	bool operator<=(random_access_iterator& _x) {return (current == _x.current);}
+	bool operator==(const random_access_iterator& _x) {return (current == _x.current);}
+	bool operator!=(const random_access_iterator& _x) {return (current != _x.current);}
+	bool operator>(const random_access_iterator& _x) {return (current > _x.current);}
+	bool operator>=(const random_access_iterator& _x) {return (current >= _x.current);}
+	bool operator<(const random_access_iterator& _x) {return (current < _x.current);}
+	bool operator<=(const random_access_iterator& _x) {return (current <= _x.current);}
 	
 	reference operator*() const {return (*this->current);}
 	pointer operator->() const {return (&current);}
@@ -71,8 +71,14 @@ public:
 		current -= n;
 		return (*this);
 		}
-	random_access_iterator &operator+(difference_type n) const {random_access_iterator(current + n);}
-	random_access_iterator &operator-(difference_type n) const {random_access_iterator(current - n);}
+	random_access_iterator &operator+(difference_type n) const {return random_access_iterator(current + n);}
+
+	random_access_iterator &operator-(difference_type n) const {return random_access_iterator(current - n);}
+
+	difference_type operator-(const random_access_iterator & rhs)
+	{
+		return (current - rhs.current);
+	}
 
 protected:
 	iterator_type	current;

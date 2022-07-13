@@ -560,13 +560,15 @@ template <class T, class Allocator>
 typename vector<T, Allocator>::iterator vector<T, Allocator>::erase( iterator pos ) {
 	size_type	pos_idx = 0;
 	iterator 	it = begin();
+	size_type idx = pos - begin();
 
+	std::cout << "idx: " << idx << std::endl;
 	for (; it != pos; ++it, ++pos_idx);
-	// if (it == end())
-	// {
-	// 	pop_back();
-	// 	return (end());
-	// }
+	if (it == end())
+	{
+		pop_back();
+		return (end());
+	}
 	for (size_type i = pos_idx; i < _size - 1; ++i) {
 		_alloc.destroy(_array + i);
 		try
