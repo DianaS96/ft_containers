@@ -70,15 +70,28 @@
         //     i++;
         // }
 
-        ft::vector<char> ch;
+        ft::vector<char> a;
         std::cout << "----------------assign1----------------" << std::endl;
-        ch.assign(5, 'a');
-        std::cout << ch[0] << std::endl;
-        for (size_t i = 0; i < ch.size(); ++i)
-            std::cout << ch[i] << std::endl;
+        a.assign(5, 'a');
+        for (size_t i = 0; i < a.size(); ++i)
+            std::cout << a[i] << std::endl;
         std::cout << "----------------assign2----------------" << std::endl;
-        ch.assign(7, 'b');
-        for (size_t i = 0; i < ch.size(); ++i)
-            std::cout << ch[i] << std::endl;
+        ft::vector<char> b;
+        b.assign(7, 'b');
+        for (size_t i = 0; i < b.size(); ++i)
+            std::cout << b[i] << std::endl;
+        if (a == b)
+            std::cout << "a == b" << std::endl;
+        else
+            std::cout << "a != b" << std::endl;
+
+        std::cout << "----------------assign3----------------" << std::endl;
+        a.assign(b.begin(), b.end());
+        for (size_t i = 0; i < a.size(); ++i)
+            std::cout << a[i] << std::endl;
+        if (a == b)
+            std::cout << "a == b" << std::endl;
+        else
+            std::cout << "a != b" << std::endl;
     }
 

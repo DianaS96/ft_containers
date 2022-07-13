@@ -56,8 +56,8 @@ template <
 		/* Replaces the contents with count copies of value value */
 		void assign( size_type count, const T& value );
 		/* Replaces the contents with copies of those in the range [first, last). */
-		// template < class InputIt >
-		// void assign( InputIt first, InputIt last );
+		template < class InputIt >
+		void assign( typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, InputIt last );
 
 		/* Returns the allocator associated with the container. */
 		allocator_type get_allocator() const;
@@ -273,20 +273,37 @@ void vector<T, Allocator>::assign( size_type count, const T& value ) {
 		}
 	}
 }
-		// /* Replaces the contents with copies of those in the range [first, last). */
-		// template < class InputIt >
-		// void assign( InputIt first, InputIt last );
 
-// template <class T, class Allocator>
-// void vector<T, Allocator>::assign( size_type count, const T& value ) {
-// 	size_type	i = 0;
-// 	if (count > _capacity)
-// 	{
-// 		for (; i < _size; ++i)
-// 			_alloc.destroy(_array + i);
-// 		_alloc.deallocate(_array, _capacity);
-// 	}
-// }
+template <class T, class Allocator>
+template < class InputIt >
+void vector<T, Allocator>::assign( typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, InputIt last ) {
+	size_type	count = last - first;
+	size_type	i = 0;
+
+	for (i = 0; i < _size; ++i)
+		_alloc.destroy(_array + i);
+	if (_capacity < count)
+	{
+		_alloc.deallocate(_array, _capacity);
+		_capacity = count;
+		_alloc.allocate(_capacity);
+	}
+	_size = count;
+	for (i = 0; i < _size && first != last; ++i, ++first)
+	{
+		try
+		{
+			_alloc.construct(_array + i, *first);
+		}
+		catch(...)
+		{
+			for (size_type j = 0; j < i; ++j)
+				_alloc.destroy(_array + j);
+			throw;
+		}
+	}
+}
+
 
 template <class T, class Allocator>
 typename vector<T, Allocator>::allocator_type vector<T, Allocator>::get_allocator() const {
@@ -766,6 +783,50 @@ template <class T, class Allocator>
 typename vector<T, Allocator>::const_reverse_iterator vector<T, Allocator>::rend() const {
 	return const_reverse_iterator(this->begin());
 }
+
+/*---------------------------------------- Non-member functions ----------------------------------------*/
+
+template <class T, class Allocator>
+bool operator==( const ft::vector<T, Allocator>& lhs,
+                 const ft::vector<T, Allocator>& rhs ) {
+	if (lhs.size() != rhs.size())
+		return false;
+	for (size_t i = 0; i < lhs.size(); ++i)
+		if (lhs[i] != rhs[i])
+			return false;
+	return true;
+}
+
+template <class T, class Allocator>
+bool operator!=( const ft::vector<T, Allocator>& lhs,
+                 const ft::vector<T, Allocator>& rhs ) { return !(lhs == rhs); }
+
+template <class T, class Allocator>
+bool operator<( const ft::vector<T, Allocator>& lhs,
+                 const ft::vector<T, Allocator>& rhs ) {
+	size_t	size = rhs.size();
+
+	if (lhs.size() < rhs.size())
+		size = lhs.size();
+	for (size_t i = 0; i < size; ++i)
+	{
+		if (lhs[i] != rhs[i])
+			return (lhs[i] < rhs[i]);
+	}
+	return (lhs.size() < rhs.size());
+}
+
+template <class T, class Allocator>
+bool operator<=( const ft::vector<T, Allocator>& lhs,
+                 const ft::vector<T, Allocator>& rhs ) {return (lhs == rhs || lhs < rhs);}
+
+template <class T, class Allocator>
+bool operator>( const ft::vector<T, Allocator>& lhs,
+                 const ft::vector<T, Allocator>& rhs ) {return !(lhs <= rhs);}
+
+template <class T, class Allocator>
+bool operator>=( const ft::vector<T, Allocator>& lhs,
+                 const ft::vector<T, Allocator>& rhs ) {return !(lhs < rhs);}
 
 }
 
