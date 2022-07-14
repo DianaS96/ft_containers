@@ -19,12 +19,21 @@
 /*end color*/
 # define NONE        "\033[0m"
 
+#define WRONG_SIZE_CAP	"Wrong size or capacity!"
+#define SIZE_CAP_OK		"Size and capacity are ok"
+
+#define	SIZE_CAP_HEADER	"Size and capacity"
+
+#define NO_RETURN_VALUE		0
+#define OK_RETURN_VALUE		1
+#define BAD_RETURN_VALUE	2
+
 // using std::chrono::high_resolution_clock;
 // using std::chrono::duration_cast;
 // using std::chrono::duration;
 // using std::chrono::milliseconds;
 
-# define	SIZE	1000
+# define	SIZE	10
 
 class Timer
 {
@@ -56,17 +65,20 @@ struct get_data
 	double	std_time;
 	double	time_dif;
 	double	time_dif_perc;
+	double	ft_total_time;
+	double	std_total_time;
 };
 
 void	ft_print_head()
 {
 	std::cout << std::setw(20) << "Function" << "|";
-    std::cout << std::setw(27) << "Size and capacity" << "|";
+    std::cout << std::setw(28) << SIZE_CAP_HEADER << "|";
     std::cout << std::setw(37) << "Values in underlaying array" << "|";
     std::cout << std::setw(20) << "Time (ft namespace), ms" << "|";
     std::cout << std::setw(20) << "Time (std namespace), ms" << "|";
     std::cout << std::setw(13) << "Diff, ms" << "|";
-    std::cout << std::setw(20) << "Diff, %" << std::endl;
+    std::cout << std::setw(20) << "Diff, %" << "|";
+    std::cout << std::setw(20) << "Return val" << std::endl;
 }
 
 template<typename T>
@@ -79,20 +91,22 @@ int	ft_check_values(ft::vector<T> ft_vec, std::vector<T> std_vec)
 }
 
 template<typename T>
-void	ft_print_stats(ft::vector<T> ft_vec, std::vector<T> std_vec, get_data data)
+void	ft_print_stats(ft::vector<T> &ft_vec, std::vector<T> &std_vec, get_data data, int res)
 {
 	const char	*color = FGREEN;
+
+	// std::cout << "ft_s: " << ft_vec.size() << " ft_cap: " << ft_vec.capacity() << std::endl;
+	// std::cout << "_s: " << std_vec.size() << " std_cap: " << std_vec.capacity() << std::endl;
+	// std::cout << "back: " << ft_vec.back() << std::endl;
+
 	if (data.time_dif_perc > 2000)
 		color = FRED;
-	std::cout << "size_ft: " << ft_vec.size() << ", size_std: " << std_vec.size() << std::endl;
-	std::cout << "cap_ft: " << ft_vec.capacity() << ", cap_std: " << std_vec.capacity() << std::endl;
-
 	std::cout.precision(5);
 	std::cout << std::setw(20) << data.test_name << "|";
 	if (std_vec.size() != ft_vec.size() || std_vec.capacity() != ft_vec.capacity())
-   		std::cout << std::setw(10) << FRED << "Wrong size or capacity!" << NONE << "|";
+   		std::cout << std::setw(35 - std::string(WRONG_SIZE_CAP).length()) << FRED << WRONG_SIZE_CAP << NONE << "|";
 	else
-   		std::cout << std::setw(10) << FGREEN << "Size and capacity are ok" << NONE << "|";
+   		std::cout << std::setw(35 - std::string(SIZE_CAP_OK).length()) << FGREEN << SIZE_CAP_OK << NONE << "|";
 	if (ft_check_values(ft_vec, std_vec))
    		std::cout << std::setw(10) << FRED << "Wrong values in underlaying array!" << NONE << "|";
 	else
@@ -100,7 +114,13 @@ void	ft_print_stats(ft::vector<T> ft_vec, std::vector<T> std_vec, get_data data)
     std::cout << std::setw(20) << std::fixed << data.ft_time << " ms" << "|";
     std::cout << std::setw(21) << data.std_time << " ms" << "|";
     std::cout << std::setw(10) << data.time_dif << " ms" << "|";
-    std::cout << std::setw(20) << color << data.time_dif_perc << " %" << NONE << std::endl;
+    std::cout << std::setw(20) << color << data.time_dif_perc << " %" << NONE << "|";
+	if (res == 0)
+		std::cout << std::setw(10) << FGREEN << "N/A" << NONE << std::endl;
+	else if (res == 1)
+		std::cout << std::setw(10) << FGREEN << "Ok" << NONE << std::endl;
+	if (res == 2)
+		std::cout << std::setw(10) << FRED << "=(" << NONE << std::endl;
 	
 }
 
@@ -131,6 +151,255 @@ void	std_push_back(std::vector<T> &std_vec)
 	}
 }
 
+void	ft_push_back_test(double ms_double_ft, double ms_double_std, get_data &data, \
+ft::vector<int> &ft_vec, std::vector<int> &std_vec)
+{
+	Timer::Start();
+	ft_push_back(ft_vec);
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_push_back(std_vec);
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	ft_fill_data("push_back", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, NO_RETURN_VALUE);
+}
+
+void	ft_assign_test(double ms_double_ft, double ms_double_std, get_data &data, \
+ft::vector<int> &ft_vec, std::vector<int> &std_vec)
+{
+	Timer::Start();
+	ft_vec.assign(6, 4);
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_vec.assign(6, 4);
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	ft_fill_data("assign (count, val)", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, NO_RETURN_VALUE);
+}
+
+void	ft_assign_it_test(double ms_double_ft, double ms_double_std, get_data &data, \
+ft::vector<int> &ft_vec, std::vector<int> &std_vec, ft::vector<int> &tmp_ft, std::vector<int> &tmp_std)
+{
+	Timer::Start();
+	ft_vec.assign(tmp_ft.begin(), tmp_ft.end());
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_vec.assign(tmp_std.begin(), tmp_std.end());
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	ft_fill_data("assign (it, it)", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, NO_RETURN_VALUE);
+}
+
+template <typename T1>
+void	ft_at_test(double ms_double_ft, double ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
+{
+	int	res = BAD_RETURN_VALUE;
+	typename std::vector<T1>::value_type	std_return;
+	typename ft::vector<T1>::value_type		ft_return;
+
+	Timer::Start();
+	ft_return = ft_vec.at(0);
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_return = std_vec.at(0);
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	if (ft_return == std_return)
+	 	res = OK_RETURN_VALUE;
+	ft_fill_data("at", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
+template <typename T1>
+void	ft_brackets_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
+{
+	int	res = BAD_RETURN_VALUE;
+	typename std::vector<T1>::value_type	std_return;
+	typename ft::vector<T1>::value_type		ft_return;
+
+	Timer::Start();
+	ft_return = ft_vec[4];
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_return = std_vec[4];
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	if (ft_return == std_return)
+	 	res = OK_RETURN_VALUE;
+	ft_fill_data("operator[]", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
+template <typename T1>
+void	ft_front_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
+{
+	int	res = BAD_RETURN_VALUE;
+	typename std::vector<T1>::value_type	std_return;
+	typename ft::vector<T1>::value_type		ft_return;
+
+	Timer::Start();
+	ft_return = ft_vec.front();
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_return = std_vec.front();
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	if (ft_return == std_return)
+	 	res = OK_RETURN_VALUE;
+	ft_fill_data("front", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
+template <typename T1>
+void	ft_back_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
+{
+	int	res = BAD_RETURN_VALUE;
+	typename std::vector<T1>::value_type	std_return;
+	typename ft::vector<T1>::value_type		ft_return;
+
+	Timer::Start();
+	ft_return = ft_vec.back();
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_return = std_vec.back();
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	if (ft_return == std_return)
+	 	res = OK_RETURN_VALUE;
+	ft_fill_data("back", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
+template <typename T1>
+void	ft_data_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
+{
+	int	res = OK_RETURN_VALUE;
+	typename std::vector<T1>::value_type	*std_return;
+	typename ft::vector<T1>::value_type		*ft_return;
+
+	Timer::Start();
+	ft_return = ft_vec.data();
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_return = std_vec.data();
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	for (size_t i = 0; i < ft_vec.size(); ++i)
+	{
+		if (ft_return[i] != std_return[i])
+		{
+			res = BAD_RETURN_VALUE;
+			break;
+		}
+	}
+	ft_fill_data("data", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
+template <typename T1>
+void	ft_empty_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
+{
+	int		res = OK_RETURN_VALUE;
+	bool	std_return;
+	bool	ft_return;
+
+	Timer::Start();
+	ft_return = ft_vec.empty();
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_return = std_vec.empty();
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	if (std_return != ft_return)
+		res = BAD_RETURN_VALUE;
+	ft_fill_data("empty", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
+template <typename T1>
+void	ft_size_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
+{
+	int		res = OK_RETURN_VALUE;
+	size_t	std_return;
+	size_t	ft_return;
+
+	Timer::Start();
+	ft_return = ft_vec.size();
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_return = std_vec.size();
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	if (std_return != ft_return)
+		res = BAD_RETURN_VALUE;
+	ft_fill_data("size", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
+template <typename T1>
+void	ft_max_size_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
+{
+	int		res = OK_RETURN_VALUE;
+	size_t	std_return;
+	size_t	ft_return;
+
+	Timer::Start();
+	ft_return = ft_vec.max_size();
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_return = std_vec.max_size();
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	if (std_return != ft_return)
+		res = BAD_RETURN_VALUE;
+	ft_fill_data("max_size", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
+template <typename T1>
+void	ft_capacity_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
+{
+	int		res = OK_RETURN_VALUE;
+	size_t	std_return;
+	size_t	ft_return;
+
+	Timer::Start();
+	ft_return = ft_vec.capacity();
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_return = std_vec.capacity();
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	if (std_return != ft_return)
+		res = BAD_RETURN_VALUE;
+	ft_fill_data("capacity", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
 int main(void) {
 	std::cout << "--------------------------------------- VECTOR TEST ---------------------------------------" << std::endl;
 	get_data data;
@@ -145,43 +414,73 @@ int main(void) {
 		tmp_ft.push_back(i);
 		tmp_std.push_back(i);
 	}
+	data.ft_total_time = 0;
+	data.std_total_time = 0;
 	ft_print_head();
 	/*------------------------ push_back ------------------------*/
-	
-	Timer::Start();
-	ft_push_back(ft_vec);
-	Timer::Stop();
-	ms_double_ft = Timer::getRes();
-	Timer::Start();
-	std_push_back(std_vec);
-	Timer::Stop();
-	ms_double_std = Timer::getRes();
-	printf("%f, %f\n", ms_double_ft, ms_double_std);
-
-	ft_fill_data("push_back", ms_double_ft, ms_double_std, data);
-	ft_print_stats(ft_vec, std_vec, data);
+	ft_push_back_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+	data.ft_total_time += data.ft_time;
+	data.std_total_time += data.std_time;
 	/*------------------------ assign (count, value) ------------------------*/
-	Timer::Start();
-	ft_vec.assign(6, 4);
-	Timer::Stop();
-	ms_double_ft = Timer::getRes();
-	Timer::Start();
-	std_vec.assign(6, 4);
-	Timer::Stop();
-	ms_double_std = Timer::getRes();
-	ft_fill_data("assign (count, val)", ms_double_ft, ms_double_std, data);
-	ft_print_stats(ft_vec, std_vec, data);
+	ft_assign_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+	data.ft_total_time += data.ft_time;
+	data.std_total_time += data.std_time;
 	/*------------------------ assign (it, it) ------------------------*/
-	Timer::Start();
-	ft_vec.assign(tmp_ft.begin(), tmp_ft.end());
-	Timer::Stop();
-	ms_double_ft = Timer::getRes();
-	Timer::Start();
-	std_vec.assign(tmp_std.begin(), tmp_std.end());
-	Timer::Stop();
-	ms_double_std = Timer::getRes();
-	ft_fill_data("assign (it, it)", ms_double_ft, ms_double_std, data);
-	ft_print_stats(ft_vec, std_vec, data);
+	ft_assign_it_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec, tmp_ft, tmp_std);
+	data.ft_total_time += data.ft_time;
+	data.std_total_time += data.std_time;
+
+	std::cout << "Elements access..." << std::endl;
+	/*------------------------ at ------------------------*/
+	ft_at_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+	data.ft_total_time += data.ft_time;
+	data.std_total_time += data.std_time;
+	/*------------------------ operator[] ------------------------*/
+	ft_brackets_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+	data.ft_total_time += data.ft_time;
+	data.std_total_time += data.std_time;
+	/*------------------------ front ------------------------*/
+	ft_front_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+	data.ft_total_time += data.ft_time;
+	data.std_total_time += data.std_time;
+	/*------------------------ back ------------------------*/
+	ft_back_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+	data.ft_total_time += data.ft_time;
+	data.std_total_time += data.std_time;
+	/*------------------------ data ------------------------*/
+	ft_data_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+	data.ft_total_time += data.ft_time;
+	data.std_total_time += data.std_time;
+
+	std::cout << "Capacity..." << std::endl;
+	/*------------------------ empty ------------------------*/
+	ft_empty_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+	data.ft_total_time += data.ft_time;
+	data.std_total_time += data.std_time;
+
+	/*------------------------ size ------------------------*/
+	ft_size_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+	data.ft_total_time += data.ft_time;
+	data.std_total_time += data.std_time;
+
+	/*------------------------ max_size ------------------------*/
+	ft_max_size_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+	data.ft_total_time += data.ft_time;
+	data.std_total_time += data.std_time;
+
+	/*------------------------ capacity ------------------------*/
+	ft_capacity_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+	data.ft_total_time += data.ft_time;
+	data.std_total_time += data.std_time;
+	std::cout << ft_vec.capacity() << ", " << ft_vec.size() << std::endl;
+	std::cout << std_vec.capacity() << ", " << std_vec.size()  << std::endl;
+	// for (size_t i = 0; i < ft_vec.size(); ++i)
+	// {
+	// 	std::cout << "ft: " << ft_vec[i] << "; std:: " << std_vec[i] << std::endl;
+	// }
+	std::cout << "ft_total_time: " << data.ft_total_time << " std_total_time: " << data.std_total_time << std::endl;
+	std::cout << "Diff, ms: " << data.ft_total_time - data.std_total_time << std::endl;
+	std::cout << "Diff, %: " << (data.ft_total_time - data.std_total_time) / data.std_total_time << std::endl;
 
 	return (0);
 }
