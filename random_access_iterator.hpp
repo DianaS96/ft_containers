@@ -63,17 +63,17 @@ public:
 	}
 
 	reference operator[](difference_type n) const {return (current[n]);}
-	random_access_iterator &operator+=(difference_type n) const {
+	random_access_iterator &operator+=(difference_type n) {
 		current += n;
 		return (*this);
 		}
-	random_access_iterator &operator-=(difference_type n) const {
+	random_access_iterator &operator-=(difference_type n) {
 		current -= n;
 		return (*this);
 		}
-	random_access_iterator &operator+(difference_type n) const {return random_access_iterator(current + n);}
+	random_access_iterator &operator+(difference_type n) {return random_access_iterator(current + n);}
 
-	random_access_iterator &operator-(difference_type n) const {return random_access_iterator(current - n);}
+	random_access_iterator &operator-(difference_type n) {return random_access_iterator(current - n);}
 
 	difference_type operator-(const random_access_iterator & rhs)
 	{
@@ -144,16 +144,16 @@ public:
 	}
 
 	reference operator[](difference_type n) const {return (current[n]);}
-	rev_random_access_iterator &operator+=(difference_type n) const {
+	rev_random_access_iterator &operator+=(difference_type n) {
 		current -= n;
 		return (*this);
 		}
-	rev_random_access_iterator &operator-=(difference_type n) const {
+	rev_random_access_iterator &operator-=(difference_type n) {
 		current += n;
 		return (*this);
 		}
-	rev_random_access_iterator &operator+(difference_type n) const {rev_random_access_iterator(current - n);}
-	rev_random_access_iterator &operator-(difference_type n) const {rev_random_access_iterator(current + n);}
+	rev_random_access_iterator &operator+(difference_type n) {rev_random_access_iterator(current - n);}
+	rev_random_access_iterator &operator-(difference_type n) {rev_random_access_iterator(current + n);}
 
 protected:
 	Iterator	current;

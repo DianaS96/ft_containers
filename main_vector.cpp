@@ -489,6 +489,72 @@ ft::vector<T1> &ft_vec, std::vector<T1> &std_vec, ft::vector<T1> &ft_tmp, std::v
 	ft_print_stats(ft_vec, std_vec, data, res);
 }
 
+template <typename T1>
+void	ft_erase_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
+{
+	int res								= 0;
+	typename ft::vector<T1>::iterator	ft_it = ft_vec.begin();
+	typename std::vector<T1>::iterator	std_it = std_vec.begin();
+
+	ft_it += ft_vec.size() / 2;
+	std_it += std_vec.size() / 2;
+	Timer::Start();
+	ft_vec.erase(ft_it);
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_vec.erase(std_it);
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	ft_fill_data("erase", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
+template <typename T1>
+void	ft_erase_iter_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
+{
+	int res								= 0;
+	typename ft::vector<T1>::iterator	ft_it = ft_vec.begin();
+	typename std::vector<T1>::iterator	std_it = std_vec.begin();
+
+	ft_it += ft_vec.size() / 2;
+	std_it += std_vec.size() / 2;
+	Timer::Start();
+	ft_vec.erase(ft_vec.begin(), ft_it);
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_vec.erase(std_vec.begin(), std_it);
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	ft_fill_data("erase_iter", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
+/*template <typename T1>
+void	ft_erase_iter_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec, ft::vector<T1> &ft_tmp, std::vector<T1> &std_tmp)
+{
+	int res								= 0;
+	typename ft::vector<T1>::iterator	ft_it = ft_vec.begin();
+	typename std::vector<T1>::iterator	std_it = std_vec.begin();
+
+	ft_it++;
+	std_it++;
+	Timer::Start();
+	ft_vec.insert(ft_it, ft_tmp.begin(), ft_tmp.end());
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_vec.insert(std_it, std_tmp.begin(), std_tmp.end());
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	ft_fill_data("insert_iter", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}*/
+
 int main(void) {
 	std::cout << "--------------------------------------- VECTOR TEST ---------------------------------------" << std::endl;
 	get_data data;
@@ -580,6 +646,7 @@ int main(void) {
 	data.std_total_time += data.std_time;
 	// std::cout << ft_vec.capacity() << ", " << ft_vec.size() << std::endl;
 	// std::cout << std_vec.capacity() << ", " << std_vec.size()  << std::endl;
+	
 	ft_insert_count_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
 	data.ft_total_time += data.ft_time;
 	data.std_total_time += data.std_time;
@@ -590,6 +657,7 @@ int main(void) {
 	data.std_total_time += data.std_time;
 	// std::cout << ft_vec.capacity() << ", " << ft_vec.size() << std::endl;
 	// std::cout << std_vec.capacity() << ", " << std_vec.size()  << std::endl;
+	
 	ft_insert_iter_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec, tmp_ft, tmp_std);
 	data.ft_total_time += data.ft_time;
 	data.std_total_time += data.std_time;
@@ -630,6 +698,10 @@ int main(void) {
 	data.std_total_time += data.std_time;
 	// std::cout << ft_vec.capacity() << ", " << ft_vec.size() << std::endl;
 	// std::cout << std_vec.capacity() << ", " << std_vec.size()  << std::endl;
+
+	ft_erase_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+
+	ft_erase_iter_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
 
 	std::cout << "ft_total_time: " << data.ft_total_time << " std_total_time: " << data.std_total_time << std::endl;
 	std::cout << "Diff, ms: " << data.ft_total_time - data.std_total_time << std::endl;
