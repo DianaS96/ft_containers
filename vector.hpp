@@ -485,15 +485,20 @@ template <class T, class Allocator>
 void vector<T, Allocator>::insert( iterator pos, size_type count, const T& value ) {
 	size_type	pos_idx = 0;
 	size_type	i = 0;
+        // const size_type _Geometric = _Oldcapacity + _Oldcapacity / 2;
+
+        // if (_Geometric < _Newsize) {
+        //     return _Newsize; // geometric growth would be insufficient
+        // }
+
+        // return _Geometric; // geometric growth is sufficient
+
 
 	for (iterator it = begin(); it != pos; ++it, ++pos_idx);
-	if (_size + count > _capacity)
-	{
-		if (_capacity * 2 > _size + count)
-			reserve(_capacity * 2);
-		else
-			reserve(_size + count);
-	}
+	if (_size == _capacity)
+		reserve(_capacity * 2);
+	if (_size + count >= _capacity)
+		reserve(_size + count);
 	// Create tmp array and fill it with all elements from _array until pos.
 	T *newarr = _alloc.allocate(_capacity);
 	try {
@@ -551,16 +556,18 @@ typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, In
 
 	for (InputIt it = first; it != last; ++it, ++count);
 	for (InputIt it = begin(); it != pos; ++it, ++pos_idx);
+	if (_size == _capacity)
+		reserve(_capacity * 2);
 	if (_size + count > _capacity)
 	{
-		if (_capacity * 2 > _size + count)
-			new_cap = _capacity * 2;
+		if (_size * 2 > _size + count)
+			new_cap = _size * 2;
 		else
 			new_cap = _size + count;
 	}
 	else
 		new_cap = _capacity;
-		// Create tmp array and fill it with all elements from _array until pos.
+	// Create tmp array and fill it with all elements from _array until pos.
 	tmp = _alloc.allocate(new_cap);
 	try {
 		for (i = 0; i < pos_idx; ++i)
@@ -602,6 +609,7 @@ typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, In
 		_alloc.destroy(_array + i);
 	_alloc.deallocate(_array, _capacity);
 	_array = tmp;
+	_capacity = new_cap;
 	_size += count;
 }
 
