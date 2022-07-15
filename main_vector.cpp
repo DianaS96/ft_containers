@@ -1,41 +1,5 @@
 #include <vector>
-#include <chrono>
 #include "vector.hpp"
-#include <iomanip>
-#include <ctime>
-#include <stdio.h>
-#include <sys/time.h>
-#include <string.h>
-
-
-
-/*fonts color*/
-# define FBLACK		"\033[0;30m"
-# define FRED		"\033[0;31m"
-# define FGREEN		"\033[0;32m"
-# define FYELLOW	"\033[0;33m"
-# define FBLUE		 "\033[0;34m"
-# define FPURPLE	"\033[0;35m"
-# define FCYAN		"\x1b[36m"
-
-/*end color*/
-# define NONE        "\033[0m"
-
-#define WRONG_SIZE_CAP	"Wrong size or capacity!"
-#define SIZE_CAP_OK		"Size and capacity are ok"
-
-#define	SIZE_CAP_HEADER	"Size and capacity"
-
-#define NO_RETURN_VALUE		0
-#define OK_RETURN_VALUE		1
-#define BAD_RETURN_VALUE	2
-
-// using std::chrono::high_resolution_clock;
-// using std::chrono::duration_cast;
-// using std::chrono::duration;
-// using std::chrono::milliseconds;
-
-# define	SIZE	10
 
 class Timer
 {
@@ -533,6 +497,82 @@ ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
 	ft_print_stats(ft_vec, std_vec, data, res);
 }
 
+template <typename T1>
+void	ft_pop_back_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
+{
+	int res								= 0;
+
+	Timer::Start();
+	ft_vec.pop_back();
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_vec.pop_back();
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	ft_fill_data("pop_back", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
+template <typename T1>
+void	ft_resize_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
+{
+	int	res = 0;
+	int	count = ft_vec.size() / 2;
+	int	value = 100;
+
+	Timer::Start();
+	ft_vec.resize(count, value);
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_vec.resize(count, value);
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	ft_fill_data("resize (increase)", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
+template <typename T1>
+void	ft_resize2_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
+{
+	int	res = 0;
+	int	count = ft_vec.size() * 2;
+	int	value = 100;
+
+	Timer::Start();
+	ft_vec.resize(count, value);
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_vec.resize(count, value);
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	ft_fill_data("resize (decrease)", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
+template <typename T1>
+void	ft_swap_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
+ft::vector<T1> &ft_vec, std::vector<T1> &std_vec, ft::vector<T1> &ft_tmp, std::vector<T1> &std_tmp)
+{
+	int	res = 0;
+
+	Timer::Start();
+	ft_vec.swap(ft_tmp);
+	Timer::Stop();
+	ms_double_ft = Timer::getRes();
+	Timer::Start();
+	std_vec.swap(std_tmp);
+	Timer::Stop();
+	ms_double_std = Timer::getRes();
+	ft_fill_data("swap", ms_double_ft, ms_double_std, data);
+	ft_print_stats(ft_vec, std_vec, data, res);
+}
+
 /*template <typename T1>
 void	ft_erase_iter_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
 ft::vector<T1> &ft_vec, std::vector<T1> &std_vec, ft::vector<T1> &ft_tmp, std::vector<T1> &std_tmp)
@@ -641,12 +681,14 @@ int main(void) {
 	// 	std::cout << "ft: " << ft_vec[i] << "; std:: " << std_vec[i] << std::endl;
 	// }
 	std::cout << "Modifiers --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
+	/*------------------------ insert ------------------------*/
 	ft_insert_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
 	data.ft_total_time += data.ft_time;
 	data.std_total_time += data.std_time;
 	// std::cout << ft_vec.capacity() << ", " << ft_vec.size() << std::endl;
 	// std::cout << std_vec.capacity() << ", " << std_vec.size()  << std::endl;
 	
+	/*------------------------ insert (with count option) ------------------------*/
 	ft_insert_count_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
 	data.ft_total_time += data.ft_time;
 	data.std_total_time += data.std_time;
@@ -658,6 +700,7 @@ int main(void) {
 	// std::cout << ft_vec.capacity() << ", " << ft_vec.size() << std::endl;
 	// std::cout << std_vec.capacity() << ", " << std_vec.size()  << std::endl;
 	
+	/*------------------------ insert (with iterators) ------------------------*/
 	ft_insert_iter_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec, tmp_ft, tmp_std);
 	data.ft_total_time += data.ft_time;
 	data.std_total_time += data.std_time;
@@ -699,9 +742,25 @@ int main(void) {
 	// std::cout << ft_vec.capacity() << ", " << ft_vec.size() << std::endl;
 	// std::cout << std_vec.capacity() << ", " << std_vec.size()  << std::endl;
 
+	/*------------------------ erase ------------------------*/
 	ft_erase_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
 
+	/*------------------------ erase (with iterators) ------------------------*/
 	ft_erase_iter_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+
+	/*------------------------ pop_back ------------------------*/
+	ft_pop_back_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+
+	/*------------------------ resize ------------------------*/
+	ft_resize_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+	ft_resize2_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec);
+	// for (size_t i = 0; i < ft_vec.size(); ++i)
+	// 	std::cout << ft_vec[i] << std::endl;
+
+	/*------------------------ swap ------------------------*/
+	ft_swap_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec, tmp_ft, tmp_std);
+	// for (size_t i = 0; i < ft_vec.size(); ++i)
+	// 	std::cout << ft_vec[i] << std::endl;
 
 	std::cout << "ft_total_time: " << data.ft_total_time << " std_total_time: " << data.std_total_time << std::endl;
 	std::cout << "Diff, ms: " << data.ft_total_time - data.std_total_time << std::endl;
