@@ -725,7 +725,7 @@ void vector<T, Allocator>::resize( size_type count, T value ) {
 	if (count < _size)
 	{
 		for (i = count; i < _size; ++i)
-			_alloc.destoy(_array + i);
+			_alloc.destroy(_array + i);
 	}
 	else
 	{
@@ -736,7 +736,7 @@ void vector<T, Allocator>::resize( size_type count, T value ) {
 		}
 		catch(...)
 		{
-			for (; i > size; --i)
+			for (; i > _size; --i)
 				_alloc.destroy(_array + i);
 			throw;
 		}
