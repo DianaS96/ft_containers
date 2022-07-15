@@ -42,10 +42,33 @@ namespace ft
 		void push( const value_type& value ) {container.push_back(value);}
 		void pop() {container.pop_back();}
 
+		friend bool operator==( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs ) {return (lhs.container == rhs.container);}
+		friend bool operator!=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs ) {return (lhs.container != rhs.container);}
+		friend bool operator<( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container < rhs.container);}
+		friend bool operator<=( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container <= rhs.container);}
+		friend bool operator>( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container > rhs.container);}
+		friend bool operator>=( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container >= rhs.container);}
+
+
 	protected:
 		Container	container;
 	};
-		
+
+	// template< class T, class Container >
+	// bool operator!=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs ) {return (lhs.container != rhs.container);}
+	
+	// template< class T, class Container >
+	// bool operator<( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container < rhs.container);}
+	
+	// template< class T, class Container >
+	// bool operator<=( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container <= rhs.container);}
+
+	// template< class T, class Container >
+	// bool operator>( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container > rhs.container);}
+
+	// template< class T, class Container >
+	// bool operator>=( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container >= rhs.container);}
+
 } // namespace ft
 
 #endif
