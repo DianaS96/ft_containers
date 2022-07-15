@@ -8,12 +8,12 @@
 # include <algorithm>
 # include <iterator>
 # include <iostream>
-# include <chrono>
 # include <iomanip>
 # include <ctime>
 # include <stdio.h>
 # include <sys/time.h>
-# include <string.h>
+# include <string>
+# include <limits>
 
 /*fonts color*/
 # define FBLACK		"\033[0;30m"
@@ -37,11 +37,6 @@
 #define BAD_RETURN_VALUE	2
 
 #define ZERO_TIME	"N/A - ft_time or std_time == 0"
-
-// using std::chrono::high_resolution_clock;
-// using std::chrono::duration_cast;
-// using std::chrono::duration;
-// using std::chrono::milliseconds;
 
 # define	SIZE	10
 

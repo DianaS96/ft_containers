@@ -7,7 +7,7 @@
 
 namespace ft
 {
-	template < class T, class Container = ft::vector<T>>
+	template < class T, class Container = ft::vector<T> >
 	class stack
 	{
 	public:
@@ -19,55 +19,40 @@ namespace ft
 		typedef typename Container::const_reference	const_reference;
 
 		/*-------------------- MEMBER FUNCTIONS --------------------*/
-		explicit stack( const Container& cont = Container() ) : container(cont) {}
-		stack( const stack& other ) : container(other.container) {}
+		explicit stack( const Container& cont = Container() ) : c(cont) {}
+		stack( const stack& other ) : c(other.c) {}
 		
 		stack& operator=( const stack& other ) {
 			if (this != &other)
-				container = other.container;
+				c = other.c;
 			return (*this);
 		}
 
 		~stack() {}
 
 		/*-------------------- Element access --------------------*/
-		reference top() {return container.back();}
-		const_reference top() const {return container.back();}
+		reference top() {return c.back();}
+		const_reference top() const {return c.back();}
 
 		/*-------------------- Capacity --------------------*/
-		bool empty() const {return container.empty();}
-		size_type size() const {return container.size();}
+		bool empty() const {return c.empty();}
+		size_type size() const {return c.size();}
 
 		/*-------------------- Modifiers --------------------*/
-		void push( const value_type& value ) {container.push_back(value);}
-		void pop() {container.pop_back();}
+		void push( const value_type& value ) {c.push_back(value);}
+		void pop() {c.pop_back();}
 
-		friend bool operator==( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs ) {return (lhs.container == rhs.container);}
-		friend bool operator!=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs ) {return (lhs.container != rhs.container);}
-		friend bool operator<( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container < rhs.container);}
-		friend bool operator<=( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container <= rhs.container);}
-		friend bool operator>( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container > rhs.container);}
-		friend bool operator>=( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container >= rhs.container);}
+		friend bool operator==( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs ) {return (lhs.c == rhs.c);}
+		friend bool operator!=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs ) {return (lhs.c != rhs.c);}
+		friend bool operator<( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.c < rhs.c);}
+		friend bool operator<=( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.c <= rhs.c);}
+		friend bool operator>( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.c > rhs.c);}
+		friend bool operator>=( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.c >= rhs.c);}
 
 
 	protected:
-		Container	container;
+		Container	c;
 	};
-
-	// template< class T, class Container >
-	// bool operator!=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs ) {return (lhs.container != rhs.container);}
-	
-	// template< class T, class Container >
-	// bool operator<( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container < rhs.container);}
-	
-	// template< class T, class Container >
-	// bool operator<=( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container <= rhs.container);}
-
-	// template< class T, class Container >
-	// bool operator>( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container > rhs.container);}
-
-	// template< class T, class Container >
-	// bool operator>=( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs ) {return (lhs.container >= rhs.container);}
 
 } // namespace ft
 

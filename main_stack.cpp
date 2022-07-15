@@ -39,11 +39,11 @@ struct get_data
 void	ft_print_head()
 {
 	std::cout << std::setw(20) << "Function" << "|";
+    std::cout << std::setw(11) << "Return val" << "|";
     std::cout << std::setw(20) << "Time (ft namespace), ms" << "|";
     std::cout << std::setw(20) << "Time (std namespace), ms" << "|";
     std::cout << std::setw(13) << "Diff, ms" << "|";
-    std::cout << std::setw(30) << "Diff, %" << "|";
-    std::cout << std::setw(20) << "Return val" << std::endl;
+    std::cout << std::setw(10) << "Diff, %" << std::endl;
 }
 
 template<typename T>
@@ -68,19 +68,19 @@ void	ft_print_stats(get_data data, int res)
 		color = FRED;
 	std::cout.precision(5);
 	std::cout << std::setw(20) << data.test_name << "|";
+	if (res == 0)
+		std::cout << std::setw(15) << FGREEN << "N/A" << NONE << "|";
+	else if (res == 1)
+		std::cout << std::setw(15) << FGREEN << " Ok" << NONE << "|";
+	if (res == 2)
+		std::cout << std::setw(15) << FRED << " =(" << NONE << "|";	
     std::cout << std::setw(20) << std::fixed << data.ft_time << " ms" << "|";
     std::cout << std::setw(21) << data.std_time << " ms" << "|";
     std::cout << std::setw(10) << data.time_dif << " ms" << "|";
 	if (data.ft_time == 0.0 || data.std_time == 0.0)
-	    std::cout << std::setw(30 - std::string(ZERO_TIME).length()) << FGREEN << "N/A - ft_time or std_time == 0" << NONE << "|";
+	    std::cout << std::setw(10) << FGREEN << "N/A - ft_time or std_time == 0" << NONE << std::endl;
 	else
-	    std::cout << std::setw(36 - std::to_string(data.time_dif_perc).length()) << color << data.time_dif_perc << " %" << NONE << "|";
-	if (res == 0)
-		std::cout << std::setw(10) << FGREEN << "N/A" << NONE << std::endl;
-	else if (res == 1)
-		std::cout << std::setw(10) << FGREEN << "Ok" << NONE << std::endl;
-	if (res == 2)
-		std::cout << std::setw(10) << FRED << "=(" << NONE << std::endl;	
+	    std::cout << std::setw(10) << color << data.time_dif_perc << " %" << NONE << std::endl;
 }
 
 void	ft_fill_data(std::string test_name, double &ms_double_ft, double &ms_double_std, get_data &data)
@@ -92,9 +92,10 @@ void	ft_fill_data(std::string test_name, double &ms_double_ft, double &ms_double
 	data.time_dif_perc = (data.time_dif / data.std_time) * 100;	
 }
 
-template < class T, class Container = ft::vector<T>, class Cont = std::vector<T>>
+template < class T, class Container = ft::vector<T>, class Cont = std::vector<T> >
 void	ft_top_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
-ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
+ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack)
+{
 	int		res = BAD_RETURN_VALUE;
 	size_t	ft_res;
 	size_t	std_res;
@@ -113,7 +114,7 @@ ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	ft_print_stats(data, res);
 }
 
-template < class T, class Container = ft::vector<T>, class Cont = std::vector<T>>
+template < class T, class Container = ft::vector<T>, class Cont = std::vector<T> >
 void	ft_empty_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
 ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	int		res = BAD_RETURN_VALUE;
@@ -134,7 +135,7 @@ ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	ft_print_stats(data, res);
 }
 
-template < class T, class Container = ft::vector<T>, class Cont = std::vector<T>>
+template < class T, class Container = ft::vector<T>, class Cont = std::vector<T> >
 void	ft_size_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
 ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	int		res = BAD_RETURN_VALUE;
@@ -155,7 +156,7 @@ ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	ft_print_stats(data, res);
 }
 
-template < class T, class Container = ft::vector<T>, class Cont = std::vector<T>>
+template < class T, class Container = ft::vector<T>, class Cont = std::vector<T> >
 void	ft_push_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
 ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	int		res = 0;
@@ -175,7 +176,7 @@ ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	ft_print_stats(data, res);
 }
 
-template < class T, class Container = ft::vector<T>, class Cont = std::vector<T>>
+template < class T, class Container = ft::vector<T>, class Cont = std::vector<T> >
 void	ft_pop_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
 ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	int		res = 0;
@@ -209,8 +210,8 @@ int main(void) {
 	}
 	
 	ft_print_head();
-	ft::stack<int, ft::vector<int>>		ft_stack(ft_vec);
-	std::stack<int, std::vector<int>>	std_stack(std_vec);
+	ft::stack<int, ft::vector<int> >		ft_stack(ft_vec);
+	std::stack<int, std::vector<int> >	std_stack(std_vec);
 
 	ft_top_test(ms_double_ft, ms_double_std, data, ft_stack, std_stack);
 	data.ft_total_time += data.ft_time;
@@ -231,6 +232,15 @@ int main(void) {
 	ft_pop_test(ms_double_ft, ms_double_std, data, ft_stack, std_stack);
 	data.ft_total_time += data.ft_time;
 	data.std_total_time += data.std_time;
+
+	ft::stack<int, ft::vector<int> >		ft_tmp(ft_stack);
+	std::stack<int, std::vector<int> >	std_tmp(std_stack);
+
+	if (ft_tmp == ft_stack)
+		std::cout << "== " << "ok" << std::endl;
+
+	if (std_tmp == std_stack)
+		std::cout << "== " << "ok" << std::endl;
 
 	std::cout << std::endl;
 	std::cout << "Overall results:" << std::endl;

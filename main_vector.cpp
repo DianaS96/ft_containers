@@ -40,11 +40,11 @@ void	ft_print_head()
 	std::cout << std::setw(20) << "Function" << "|";
     std::cout << std::setw(28) << SIZE_CAP_HEADER << "|";
     std::cout << std::setw(37) << "Values in underlaying array" << "|";
+    std::cout << std::setw(11) << "Return val" << "|";
     std::cout << std::setw(20) << "Time (ft namespace), ms" << "|";
     std::cout << std::setw(20) << "Time (std namespace), ms" << "|";
     std::cout << std::setw(13) << "Diff, ms" << "|";
-    std::cout << std::setw(20) << "Diff, %" << "|";
-    std::cout << std::setw(20) << "Return val" << std::endl;
+    std::cout << std::setw(10) << "Diff, %" << std::endl;
 }
 
 template<typename T>
@@ -77,16 +77,17 @@ void	ft_print_stats(ft::vector<T> &ft_vec, std::vector<T> &std_vec, get_data dat
    		std::cout << std::setw(10) << FRED << "Wrong values in underlaying array!" << NONE << "|";
 	else
    		std::cout << std::setw(10) << FGREEN << "Values in underlaying array are ok" << NONE << "|";
+	if (res == 0)
+		std::cout << std::setw(15) << FGREEN << "N/A" << NONE << "|";
+	else if (res == 1)
+		std::cout << std::setw(15) << FGREEN << " Ok" << NONE << "|";
+	if (res == 2)
+		std::cout << std::setw(15) << FRED << " =(" << NONE << "|";
     std::cout << std::setw(20) << std::fixed << data.ft_time << " ms" << "|";
     std::cout << std::setw(21) << data.std_time << " ms" << "|";
     std::cout << std::setw(10) << data.time_dif << " ms" << "|";
-    std::cout << std::setw(26 - std::to_string(data.time_dif_perc).length()) << color << data.time_dif_perc << " %" << NONE << "|";
-	if (res == 0)
-		std::cout << std::setw(10) << FGREEN << "N/A" << NONE << std::endl;
-	else if (res == 1)
-		std::cout << std::setw(10) << FGREEN << "Ok" << NONE << std::endl;
-	if (res == 2)
-		std::cout << std::setw(10) << FRED << "=(" << NONE << std::endl;
+    std::cout << std::setw(10) << color << data.time_dif_perc << " %" << NONE << std::endl;
+	
 	
 }
 
