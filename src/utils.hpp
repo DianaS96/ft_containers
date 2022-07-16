@@ -1,6 +1,9 @@
 #ifndef UTILS_HPP
 # define UTILS_HPP
 
+# define RED    1
+# define Black  0
+
 # include <memory>
 # include <exception>
 # include <stdexcept> 
@@ -14,6 +17,8 @@
 # include <sys/time.h>
 # include <string>
 # include <limits>
+# include "node.hpp"
+# include "RedBlackTree.hpp"
 
 /*fonts color*/
 # define FBLACK		"\033[0;30m"
