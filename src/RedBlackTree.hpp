@@ -20,7 +20,7 @@ namespace ft {
 		typedef typename allocator_type::template rebind<Node>::other	node_allocator;
 		
 		/*-------------------- Iterators --------------------*/
-		typedef TreeIterator<value_type>				iterator;
+		typedef ft::TreeIterator<value_type>				iterator;
 		// typedef TreeConstIterator<value_type>			const_iterator;
 		// typedef TreeIterator<value_type>				reverse_iterator;
 		// typedef TreeConstIterator<value_type>				const_reverse_iterator;
@@ -164,5 +164,82 @@ namespace ft {
 			_root = tmp;
 	}
 
+	// https://en.cppreference.com/w/cpp/algorithm/lower_bound
+	// Returns an iterator pointing to the first element that does not satisfy element < _Keyval (or comp(element, _Keyval)), 
+	// (i.e. greater or equal to), or last if no such element is found.
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::iterator RedBlackTree<T, Compare, Allocator>::lower_bound(const value_type& _Keyval) {
+		Node *tmp = _root;
+		Node *res = NULL;
+
+		while (tmp)
+		{
+			if (_compare(tmp->_Myval, _Keyval)) // true if Myval < Keyval.
+				tmp = tmp->_Right;
+			else {
+				res = tmp;
+				tmp = tmp->_Left;
+			}
+		}
+		return (iterator(res, _root));
+	}
+
+	// template <class T, class Compare, class Allocator>
+	// typename RedBlackTree<T, Compare, Allocator>::const_iterator RedBlackTree<T, Compare, Allocator>::lower_bound(const value_type& _Keyval) const {
+	// 	Node *tmp = _root;
+	// 	Node *res = NULL;
+
+	// 	while (tmp)
+	// 	{
+	// 		if (_compare(tmp->_Myval, _Keyval)) // true if Myval < Keyval.
+	// 			tmp = tmp->_Right;
+	// 		else {
+	// 			res = tmp;
+	// 			tmp = tmp->_Left
+	// 		}
+	// 	}
+	// 	return (const_iterator(res, _root));
+	// }
+
+	// https://en.cppreference.com/w/cpp/algorithm/upper_bound
+	// Returns an iterator pointing to the first element such that value < element 
+	// (or comp(value, element)) is true (i.e. strictly greater)
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::iterator RedBlackTree<T, Compare, Allocator>::upper_bound(const value_type& _Keyval) {
+		Node *tmp = _root;
+		Node *res = NULL;
+
+		while (tmp)
+		{
+			if (_compare(_Keyval, tmp->_Myval)) // true if Myval > Keyval.
+			{
+				res = tmp;
+				tmp = tmp->_Left;
+			}
+			else {
+				tmp = tmp->_Right;
+			}
+		}
+		return (iterator(res, _root));
+	}
+
+	// template <class T, class Compare, class Allocator>
+	// typename RedBlackTree<T, Compare, Allocator>::const_iterator RedBlackTree<T, Compare, Allocator>::upper_bound(const value_type& _Keyval) const {
+	// 	Node *tmp = _root;
+	// 	Node *res = NULL;
+
+	// 	while (tmp)
+	// 	{
+	// 		if (_compare(_Keyval, tmp->_Myval)) // true if Myval > Keyval.
+	// 		{
+	// 			res = tmp;
+	// 			tmp = tmp->_Left
+	// 		}
+	// 		else {
+	// 			tmp = tmp->_Right;
+	// 		}
+	// 	}
+	// 	return (const_iterator(res, _root));
+	// }
 }
 #endif

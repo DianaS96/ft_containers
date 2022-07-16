@@ -9,7 +9,7 @@
 namespace ft {
 
 /*--------------------------------------- random_access_iterator ---------------------------------------*/
-template <class T >
+template <class T>
 class TreeIterator : public std::iterator<std::bidirectional_iterator_tag, T>
 {
 public:
