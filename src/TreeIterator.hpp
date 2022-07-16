@@ -66,10 +66,37 @@ public:
 	}
     
     // predecrement. move backward to largest value < current value
-    TreeIterator operator--();
+    TreeIterator operator--() {
+		if (nodePtr == NULL)
+		{
+			if (root == NULL)
+				return (*this);
+			nodePtr = root;
+			while (nodePtr->_Right != NULL)
+				nodePtr = nodePtr->_Right;
+		}
+		else {
+			if (nodePtr->_Left != NULL)
+			{
+				nodePtr = nodePtr->_Left;
+				while (nodePtr->_Right != NULL)
+					nodePtr = nodePtr->_Right;
+			}
+			else {
+				while (nodePtr->_Parent && nodePtr == nodePtr->_Parent->_Left)
+					nodePtr = nodePtr->_Parent;
+				nodePtr = nodePtr->_Parent;
+			}
+		}
+		return (*this);
+	}
     
     // postdecrement
-    TreeIterator operator--(int);
+    TreeIterator operator--(int) {
+		TreeIterator clone(*this)
+		--(*this);
+		return (clone);
+	}
 
 private:    
     // nodePtr is the current location in the tree. we can move
