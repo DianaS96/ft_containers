@@ -1,13 +1,20 @@
 #ifndef REDBLACKTREE_HPP
 # define REDBLACKTREE_HPP
 
+// # include "TreeIterator.hpp"
 # include "utils.hpp"
-# include "TreeIterator.hpp"
 
 // https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
 // https://russianblogs.com/article/1327503951/
 // http://mech.math.msu.su/~vvb/2course/Borisenko/lecTree.html
 namespace ft {
+
+	template <class T>
+	class TreeIterator;
+
+	template <class T>
+	class TreeConstIterator;
+
 	template <class T, class Compare = std::less<T>, class Allocator = std::allocator<T> >
 	class RedBlackTree
 	{
@@ -20,8 +27,8 @@ namespace ft {
 		typedef typename allocator_type::template rebind<Node>::other	node_allocator;
 		
 		/*-------------------- Iterators --------------------*/
-		typedef ft::TreeIterator<value_type>				iterator;
-		// typedef TreeConstIterator<value_type>			const_iterator;
+		typedef ft::TreeIterator<value_type>			iterator;
+		typedef TreeConstIterator<value_type>			const_iterator;
 		// typedef TreeIterator<value_type>				reverse_iterator;
 		// typedef TreeConstIterator<value_type>				const_reverse_iterator;
 	
@@ -45,8 +52,8 @@ namespace ft {
 		/*-------------------- Iterators --------------------*/
 		iterator begin();
 		iterator end();
-		// const_iterator begin() const;
-		// const_iterator end() const;
+		const_iterator begin() const;
+		const_iterator end() const;
 		// reverse_iterator rbegin();
 		// reverse_iterator rend();
 		// const_reverse_iterator rbegin() const;
@@ -72,10 +79,10 @@ namespace ft {
 		// const_iterator find(const value_type& _Keyval) const;
 
 		iterator lower_bound(const value_type& _Keyval);
-		// const_iterator lower_bound(const value_type& _Keyval) const;
+		const_iterator lower_bound(const value_type& _Keyval) const;
 
 		iterator upper_bound(const value_type& _Keyval);
-		// const_iterator upper_bound(const value_type& _Keyval);
+		const_iterator upper_bound(const value_type& _Keyval) const;
 
 		ft::pair<iterator, iterator> equal_range(const value_type& _Keyval);
 		// ft::pair<const_iterator, const_iterator> equal_range(const value_type& _Keyval);
@@ -184,22 +191,22 @@ namespace ft {
 		return (iterator(res, _root));
 	}
 
-	// template <class T, class Compare, class Allocator>
-	// typename RedBlackTree<T, Compare, Allocator>::const_iterator RedBlackTree<T, Compare, Allocator>::lower_bound(const value_type& _Keyval) const {
-	// 	Node *tmp = _root;
-	// 	Node *res = NULL;
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::const_iterator RedBlackTree<T, Compare, Allocator>::lower_bound(const value_type& _Keyval) const {
+		Node *tmp = _root;
+		Node *res = NULL;
 
-	// 	while (tmp)
-	// 	{
-	// 		if (_compare(tmp->_Myval, _Keyval)) // true if Myval < Keyval.
-	// 			tmp = tmp->_Right;
-	// 		else {
-	// 			res = tmp;
-	// 			tmp = tmp->_Left
-	// 		}
-	// 	}
-	// 	return (const_iterator(res, _root));
-	// }
+		while (tmp)
+		{
+			if (_compare(tmp->_Myval, _Keyval)) // true if Myval < Keyval.
+				tmp = tmp->_Right;
+			else {
+				res = tmp;
+				tmp = tmp->_Left;
+			}
+		}
+		return (const_iterator(res, _root));
+	}
 
 	// https://en.cppreference.com/w/cpp/algorithm/upper_bound
 	// Returns an iterator pointing to the first element such that value < element 
@@ -223,23 +230,223 @@ namespace ft {
 		return (iterator(res, _root));
 	}
 
-	// template <class T, class Compare, class Allocator>
-	// typename RedBlackTree<T, Compare, Allocator>::const_iterator RedBlackTree<T, Compare, Allocator>::upper_bound(const value_type& _Keyval) const {
-	// 	Node *tmp = _root;
-	// 	Node *res = NULL;
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::const_iterator RedBlackTree<T, Compare, Allocator>::upper_bound(const value_type& _Keyval) const {
+		Node *tmp = _root;
+		Node *res = NULL;
 
-	// 	while (tmp)
-	// 	{
-	// 		if (_compare(_Keyval, tmp->_Myval)) // true if Myval > Keyval.
-	// 		{
-	// 			res = tmp;
-	// 			tmp = tmp->_Left
-	// 		}
-	// 		else {
-	// 			tmp = tmp->_Right;
-	// 		}
-	// 	}
-	// 	return (const_iterator(res, _root));
-	// }
+		while (tmp)
+		{
+			if (_compare(_Keyval, tmp->_Myval)) // true if Myval > Keyval.
+			{
+				res = tmp;
+				tmp = tmp->_Left;
+			}
+			else {
+				tmp = tmp->_Right;
+			}
+		}
+		return (const_iterator(res, _root));
+	}
+
+
+template <class T>
+class TreeIterator : public ft::iterator< std::bidirectional_iterator_tag, T>
+{
+public:
+
+public:    
+    // nodePtr is the current location in the tree. we can move
+    // freely about the tree using left, right, and parent.
+    // root - root pointer of the tree, which is needed for ++ and --
+    // when the iterator value is end()
+    Node<T> *nodePtr;
+	Node<T> *root;
+    
+    // used to construct an iterator return value from a node pointer
+    TreeIterator (const Node<T> *p, const Node<T> *r) : nodePtr(p), root(r) {}
+	
+	TreeIterator() {}
+	TreeIterator(const TreeIterator& other) : nodePtr(other.nodePtr), root(other.root) {}
+
+	TreeIterator &operator=(const TreeIterator& other) {
+		nodePtr = other.nodePtr;
+		root = other.root;
+		return (*this);
+	}
+
+	~TreeIterator() {}
+
+	bool operator==(const TreeIterator& rhs) const {return (nodePtr == rhs.nodePtr);}
+    
+    bool operator!=(const TreeIterator& rhs) const {return (nodePtr != rhs.nodePtr);}
+    
+    // dereference operator. return a reference to the value pointed to by nodePtr
+    T& operator*() {return nodePtr->_Myval;}
+    
+	T* operator->() {return &(nodePtr->_Myval);}
+
+    // preincrement. move forward to next larger value
+	/*If the current node has a non-null right child, Take a step down to the right. Then run down to the left as far as possible
+	If the current node has a null right child, move up the tree until we have moved over a left child link*/
+    TreeIterator& operator++() {
+		if (nodePtr == NULL)
+		{
+			if (root == NULL)
+				return (*this);
+			nodePtr = root;
+			while (nodePtr->_Left != NULL)
+				nodePtr = nodePtr->_Left;
+		}
+		else {
+			if (nodePtr->_Right != NULL)
+			{
+				nodePtr = nodePtr->_Right;
+				while (nodePtr->_Left != NULL)
+					nodePtr = nodePtr->_Left;
+			}
+			else {
+				while (nodePtr->_Parent && nodePtr == nodePtr->_Parent->_Right)
+					nodePtr = nodePtr->_Parent;
+				nodePtr = nodePtr->_Parent;
+			}
+		}
+		return (*this);
+	}
+    
+    // postincrement
+    TreeIterator operator++(int) {
+		TreeIterator clone(*this);
+		++(*this);
+		return (clone);
+	}
+    
+    // predecrement. move backward to largest value < current value
+    TreeIterator operator--() {
+		if (nodePtr == NULL)
+		{
+			if (root == NULL)
+				return (*this);
+			nodePtr = root;
+			while (nodePtr->_Right != NULL)
+				nodePtr = nodePtr->_Right;
+		}
+		else {
+			if (nodePtr->_Left != NULL)
+			{
+				nodePtr = nodePtr->_Left;
+				while (nodePtr->_Right != NULL)
+					nodePtr = nodePtr->_Right;
+			}
+			else {
+				while (nodePtr->_Parent && nodePtr == nodePtr->_Parent->_Left)
+					nodePtr = nodePtr->_Parent;
+				nodePtr = nodePtr->_Parent;
+			}
+		}
+		return (*this);
+	}
+    
+    // postdecrement
+    TreeIterator operator--(int) {
+		TreeIterator clone(*this);
+		--(*this);
+		return (clone);
+	}
+
+};
+
+template <class T>
+class TreeConstIterator : public ft::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
+{
+public:
+	TreeConstIterator() {}
+	TreeConstIterator(const TreeConstIterator& other) : nodePtr(other.nodePtr), root(other.root) {}
+
+	TreeConstIterator &operator=(const TreeConstIterator& other) {
+		nodePtr = other.nodePtr;
+		root = other.root;
+		return (*this);
+	}
+
+	~TreeConstIterator() {}
+
+	bool operator==(const TreeConstIterator& rhs) const {return (nodePtr == rhs.nodePtr);}
+    
+    bool operator!=(const TreeConstIterator& rhs) const {return (nodePtr != rhs.nodePtr);}
+    
+    const T& operator*() const {return nodePtr->_Myval;}
+    
+	const T* operator->() const {return &(nodePtr->_Myval);}
+
+    TreeConstIterator& operator++() {
+		if (nodePtr == NULL)
+		{
+			if (root == NULL)
+				return (*this);
+			nodePtr = root;
+			while (nodePtr->_Left != NULL)
+				nodePtr = nodePtr->_Left;
+		}
+		else {
+			if (nodePtr->_Right != NULL)
+			{
+				nodePtr = nodePtr->_Right;
+				while (nodePtr->_Left != NULL)
+					nodePtr = nodePtr->_Left;
+			}
+			else {
+				while (nodePtr->_Parent && nodePtr == nodePtr->_Parent->_Right)
+					nodePtr = nodePtr->_Parent;
+				nodePtr = nodePtr->_Parent;
+			}
+		}
+		return (*this);
+	}
+    
+    TreeConstIterator operator++(int) {
+		TreeConstIterator clone(*this);
+		++(*this);
+		return (clone);
+	}
+    
+    TreeConstIterator operator--() {
+		if (nodePtr == NULL)
+		{
+			if (root == NULL)
+				return (*this);
+			nodePtr = root;
+			while (nodePtr->_Right != NULL)
+				nodePtr = nodePtr->_Right;
+		}
+		else {
+			if (nodePtr->_Left != NULL)
+			{
+				nodePtr = nodePtr->_Left;
+				while (nodePtr->_Right != NULL)
+					nodePtr = nodePtr->_Right;
+			}
+			else {
+				while (nodePtr->_Parent && nodePtr == nodePtr->_Parent->_Left)
+					nodePtr = nodePtr->_Parent;
+				nodePtr = nodePtr->_Parent;
+			}
+		}
+		return (*this);
+	}
+    
+    TreeConstIterator operator--(int) {
+		TreeConstIterator clone(*this);
+		--(*this);
+		return (clone);
+	}
+
+public:    
+    const Node<T> *nodePtr;
+	const Node<T> *root;
+    
+    TreeConstIterator (const Node<T> *p, const Node<T> *r) : nodePtr(p), root(r) {}
+};
+
 }
 #endif
