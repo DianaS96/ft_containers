@@ -3,8 +3,6 @@
 
 # include "vector.hpp"
 
-#include <stack>
-
 namespace ft
 {
 	template < class T, class Container = ft::vector<T> >
