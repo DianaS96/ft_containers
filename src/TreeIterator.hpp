@@ -1,7 +1,8 @@
 #ifndef TREEITERATOR_HPP
 # define TREEITERATOR_HPP
 
-//https://www.cs.odu.edu/~zeil/cs361/latest/Public/treetraversal/index.html
+// https://www.cs.odu.edu/~zeil/cs361/latest/Public/treetraversal/index.html
+// https://cplusplus.com/reference/iterator/BidirectionalIterator/
 
 # include "utils.hpp"
 
@@ -12,24 +13,26 @@ template <class T >
 class TreeIterator : public std::iterator<std::bidirectional_iterator_tag, T>
 {
 public:
-	TreeIterator() : current(NULL) {}
-	TreeIterator(iterator_type _x) : current(_x) {}
-	TreeIterator(const bidirectional_iterator& _x) : current(_x.current) {}
-	TreeIterator &operator=(const TreeIterator& _x) {
-		if (this != &_x)
-			current = _x.current;
+	TreeIterator() {}
+	TreeIterator(const TreeIterator& other) : nodePtr(other.nodePtr), root(other.root) {}
+
+	TreeIterator &operator=(const TreeIterator& other) {
+		nodePtr = other.nodePtr;
+		root = other.root;
 		return (*this);
 	}
 
 	~TreeIterator() {}
 
-	bool operator==(const TreeIterator& rhs) const;
+	bool operator==(const TreeIterator& rhs) const {return (nodePtr == rhs.nodePtr);}
     
-    bool operator!=(const TreeIterator& rhs) const;
+    bool operator!=(const TreeIterator& rhs) const {return (nodePtr != rhs.nodePtr);}
     
     // dereference operator. return a reference to the value pointed to by nodePtr
-    const T& operator*() const;
+    T& operator*() {return nodePtr->_Myval;}
     
+	T* operator->() {return &(nodePtr->_Myval);}
+
     // preincrement. move forward to next larger value
 	/*If the current node has a non-null right child, Take a step down to the right. Then run down to the left as far as possible
 	If the current node has a null right child, move up the tree until we have moved over a left child link*/
@@ -60,7 +63,7 @@ public:
     
     // postincrement
     TreeIterator operator++(int) {
-		TreeIterator clone(*this)
+		TreeIterator clone(*this);
 		++(*this);
 		return (clone);
 	}
@@ -93,7 +96,7 @@ public:
     
     // postdecrement
     TreeIterator operator--(int) {
-		TreeIterator clone(*this)
+		TreeIterator clone(*this);
 		--(*this);
 		return (clone);
 	}
