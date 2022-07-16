@@ -58,7 +58,7 @@ namespace ft {
 		allocator_type get_allocator() const {return _alloc;}
 
 		ft::pair<iterator, bool> insert(const value_type& _Val);
-		iterator insert(const value_type& _Val);
+		iterator insert(iterator hint, const value_type& _Val);
 		template <class _Iter>
 	    void insert(_Iter _First, _Iter _Last);
 
@@ -82,7 +82,7 @@ namespace ft {
 
 		void swap(RedBlackTree & _Right);
 	
-	protected:
+	public:
 		Node *_Max(Node *_Pnode);
 		Node *_Min(Node *_Pnode);
 
@@ -96,9 +96,33 @@ namespace ft {
 			_size++;
 			return (tmp);
 		}
+
+		Node *_find_node(const value_type& _Keyval) const;
 	};
 
-	template <class T, class Compare = std::less<T>, class Allocator = std::allocator<T> >
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::Node *RedBlackTree<T, Compare, Allocator>::_find_node(const value_type& _Keyval) const {
+		Node *tmp = _root;
+
+		while (tmp != NULL)
+		{
+			if (_compare(_Keyval, tmp->_Myval))
+				tmp = tmp->_Left;
+			else if (_compare(tmp->_Myval, _Keyval))
+				tmp = tmp->_Right;
+			else
+				return (tmp);
+		}
+		return (NULL);
+	}
+
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::iterator RedBlackTree<T, Compare, Allocator>::find(const value_type& _Keyval) {
+		return (iterator(_find_node(_Keyval), _root));
+	}
+
+
+	template <class T, class Compare, class Allocator>
 	void RedBlackTree<T, Compare, Allocator>::_Lrotate(Node *node) {
 		Node *tmp = node->_Right;
 
@@ -119,7 +143,7 @@ namespace ft {
 			_root = tmp;
 	}
 
-	template <class T, class Compare = std::less<T>, class Allocator = std::allocator<T> >
+	template <class T, class Compare, class Allocator>
 	void RedBlackTree<T, Compare, Allocator>::_Rrotate(Node *node) {
 		Node *tmp = node->_Left;
 
