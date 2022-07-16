@@ -86,8 +86,8 @@ namespace ft {
 		Node *_Max(Node *_Pnode);
 		Node *_Min(Node *_Pnode);
 
-		void _Lrotate(Node *_Wherenode);
-		void _Rrotate(Node *_Wherenode);
+		void _Lrotate(Node *node);
+		void _Rrotate(Node *node);
 
     	Node *_Copy_nodes(Node *current, Node * parent, Node *other);
 		Node *_Buynode(const value_type & val, Node *parent = NULL, Node *left = NULL, Node *right = NULL, bool color = RED) {
@@ -97,5 +97,48 @@ namespace ft {
 			return (tmp);
 		}
 	};
+
+	template <class T, class Compare = std::less<T>, class Allocator = std::allocator<T> >
+	void RedBlackTree<T, Compare, Allocator>::_Lrotate(Node *node) {
+		Node *tmp = node->_Right;
+
+		node->_Right = tmp->_Left;
+		if (tmp->_Left)
+			tmp->_Left->_Parent = node;
+		tmp->_Parent = node->_Parent;
+		tmp->_Left = node;
+		node->_Parent = tmp;
+		if (tmp->_Parent)
+		{
+			if (tmp->_Parent->_Right == tmp->_Left)
+				tmp->_Parent->_Right = tmp;
+			else
+				tmp->_Parent->_Left = tmp;
+		}
+		else
+			_root = tmp;
+	}
+
+	template <class T, class Compare = std::less<T>, class Allocator = std::allocator<T> >
+	void RedBlackTree<T, Compare, Allocator>::_Rrotate(Node *node) {
+		Node *tmp = node->_Left;
+
+		node->_Left = tmp->_Right;
+		if (tmp->_Right)
+			tmp->_Right->_Parent = node;
+		tmp->_Parent = node->_Parent;
+		tmp->_Right = node;
+		node->_Parent = tmp;
+		if (tmp->_Parent)
+		{
+			if (tmp->_Parent->_Left == tmp->_Right)
+				tmp->_Parent->_Left = tmp;
+			else
+				tmp->_Parent->_Right = tmp;
+		}
+		else
+			_root = tmp;
+	}
+
 }
 #endif
