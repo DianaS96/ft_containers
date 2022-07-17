@@ -215,9 +215,19 @@ namespace ft {
 		ft::pair<Node *, bool> tmp = _Emplace(&_root, _Val);
 		return ft::make_pair(iterator(tmp.first), tmp.second);
 	}
-	// iterator insert(iterator hint, const value_type& _Val);
-	// template <class _Iter>
-	// void insert(_Iter _First, _Iter _Last);
+
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::iterator RedBlackTree<T, Compare, Allocator>::insert(typename RedBlackTree<T, Compare, Allocator>::iterator hint, const value_type& _Val) {
+		ft::pair<Node *, bool> tmp = _Emplace(&_root, _Val);
+		return iterator(tmp.first);
+	}
+
+	template <class T, class Compare, class Allocator>
+	template <class _Iter>
+	void RedBlackTree<T, Compare, Allocator>::insert(_Iter _First, _Iter _Last) {
+		for (; _First < _Last; ++_First)
+			insert(*_First);
+	}
 
 	// https://neerc.ifmo.ru/wiki/index.php?title=%D0%9A%D1%80%D0%B0%D1%81%D0%BD%D0%BE-%D1%87%D0%B5%D1%80%D0%BD%D0%BE%D0%B5_%D0%B4%D0%B5%D1%80%D0%B5%D0%B2%D0%BE
 	template <class T, class Compare, class Allocator>
