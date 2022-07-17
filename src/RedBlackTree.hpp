@@ -87,7 +87,7 @@ namespace ft {
 		ft::pair<iterator, iterator> equal_range(const value_type& _Keyval);
 		ft::pair<const_iterator, const_iterator> equal_range(const value_type& _Keyval) const;
 
-		void swap(RedBlackTree & _Right);
+		void swap(RedBlackTree & other);
 	
 	public:
 		Node *_Max(Node *_Pnode);
@@ -287,6 +287,21 @@ namespace ft {
 		return (ft::make_pair(lower_bound(_Keyval), upper_bound(_Keyval)));
 	}
 
+/*
+allocator_type	_alloc;
+		node_allocator	_node_alloc;
+		compare			_compare;
+		Node			*_root;
+		size_type		_size;
 
+*/
+	template <class T, class Compare, class Allocator>
+	void RedBlackTree<T, Compare, Allocator>::swap(RedBlackTree & other) {
+		std::swap(_alloc, other._alloc);
+		std::swap(_node_alloc, other._node_alloc);
+		std::swap(_compare, other._compare);
+		std::swap(_root, other._root);
+		std::swap(_size, other._size);
+	}
 }
 #endif
