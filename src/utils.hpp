@@ -2,7 +2,7 @@
 # define UTILS_HPP
 
 # define RED    1
-# define Black  0
+# define BLACK  0
 
 # include <memory>
 # include <exception>
