@@ -107,6 +107,30 @@ namespace ft {
 		Node *_find_node(const value_type& _Keyval) const;
 	};
 
+	/* We find the begin() position by starting from the root and working our way down, 
+	always taking left children, until we come to a node with no left child. */
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::iterator RedBlackTree<T, Compare, Allocator>::begin() {
+		Node *tmp = _root;
+		while (tmp && tmp->_Left)
+			tmp = tmp->_Left;
+		return iterator(tmp, _root);
+	}
+
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::iterator RedBlackTree<T, Compare, Allocator>::end() {return iterator(NULL, _root);}
+
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::const_iterator RedBlackTree<T, Compare, Allocator>::begin() const {
+		Node *tmp = _root;
+		while (tmp && tmp->_Left)
+			tmp = tmp->_Left;
+		return const_iterator(tmp, _root);
+	}
+	
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::const_iterator RedBlackTree<T, Compare, Allocator>::end() const {return const_iterator(NULL, _root);}
+
 	template <class T, class Compare, class Allocator>
 	typename RedBlackTree<T, Compare, Allocator>::Node *RedBlackTree<T, Compare, Allocator>::_find_node(const value_type& _Keyval) const {
 		Node *tmp = _root;
