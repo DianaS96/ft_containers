@@ -85,7 +85,7 @@ namespace ft {
 		const_iterator upper_bound(const value_type& _Keyval) const;
 
 		ft::pair<iterator, iterator> equal_range(const value_type& _Keyval);
-		// ft::pair<const_iterator, const_iterator> equal_range(const value_type& _Keyval);
+		ft::pair<const_iterator, const_iterator> equal_range(const value_type& _Keyval) const;
 
 		void swap(RedBlackTree & _Right);
 	
@@ -273,6 +273,19 @@ namespace ft {
 		return (const_iterator(res, _root));
 	}
 
+	// https://en.cppreference.com/w/cpp/algorithm/equal_range
+	// Returns a range containing all elements equivalent to value in the range [first, last)
+	template <class T, class Compare, class Allocator>
+	ft::pair<typename RedBlackTree<T, Compare, Allocator>::iterator, typename RedBlackTree<T, Compare, Allocator>::iterator> 
+	RedBlackTree<T, Compare, Allocator>::equal_range(const value_type& _Keyval) {
+		return (ft::make_pair(lower_bound(_Keyval), upper_bound(_Keyval)));
+	}
+
+	template <class T, class Compare, class Allocator>
+	ft::pair<typename RedBlackTree<T, Compare, Allocator>::const_iterator, typename RedBlackTree<T, Compare, Allocator>::const_iterator> 
+	RedBlackTree<T, Compare, Allocator>::equal_range(const value_type& _Keyval) const {
+		return (ft::make_pair(lower_bound(_Keyval), upper_bound(_Keyval)));
+	}
 
 
 }
