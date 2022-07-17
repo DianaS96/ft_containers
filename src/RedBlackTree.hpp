@@ -40,12 +40,22 @@ namespace ft {
 		size_type		_size;
 
 	public:
-		RedBlackTree() : _alloc(allocator_type()), _node_alloc(node_allocator()), _compare(compare()), _root(NULL), _size(0) {}
-		explicit RedBlackTree(const compare & comp = compare(), const allocator_type & alloc = allocator_type()) : 
-		_alloc(alloc), _node_alloc(node_allocator()), _compare(comp), _root(NULL), _size(0) {}
-		RedBlackTree(const RedBlackTree & other);
+		RedBlackTree() : 
+		_alloc(allocator_type()), 
+		_node_alloc(node_allocator()), 
+		_compare(compare()), 
+		_root(NULL), 
+		_size(0) {}
+		explicit RedBlackTree(const compare & comp, const allocator_type & alloc = allocator_type()) : 
+		_alloc(alloc), 
+		_node_alloc(node_allocator()), 
+		_compare(comp), 
+		_root(NULL), 
+		_size(0) {}
+		RedBlackTree(const RedBlackTree & other) : 
+			_alloc(other._alloc), _node_alloc(other._node_alloc), _compare(other._compare), _root(other._root), _size(other._size) {}
 
-		~RedBlackTree();
+		~RedBlackTree() {}
 
 		RedBlackTree& operator=(const RedBlackTree & other);
 	
@@ -98,7 +108,7 @@ namespace ft {
 
     	Node *_Copy_nodes(Node *current, Node * parent, Node *other);
 		Node *_Buynode(const value_type & val, Node *parent = NULL, Node *left = NULL, Node *right = NULL, bool color = RED) {
-			Node *tmp = _node_alloc.allocatw(1);
+			Node *tmp = _node_alloc.allocate(1);
 			_node_alloc.construct(tmp, Node(val, left, right, parent, color));
 			_size++;
 			return (tmp);
@@ -212,7 +222,7 @@ namespace ft {
 	template <class T, class Compare, class Allocator>
 	ft::pair<typename RedBlackTree<T, Compare, Allocator>::iterator, bool> RedBlackTree<T, Compare, Allocator>::insert(const value_type& _Val) {
 		ft::pair<Node *, bool> tmp = _Emplace(&_root, _Val);
-		return ft::make_pair(iterator(tmp.first), tmp.second);
+		return ft::make_pair(iterator(tmp.first, _root), tmp.second);
 	}
 
 	template <class T, class Compare, class Allocator>
@@ -231,21 +241,41 @@ namespace ft {
 	// https://neerc.ifmo.ru/wiki/index.php?title=%D0%9A%D1%80%D0%B0%D1%81%D0%BD%D0%BE-%D1%87%D0%B5%D1%80%D0%BD%D0%BE%D0%B5_%D0%B4%D0%B5%D1%80%D0%B5%D0%B2%D0%BE
 	template <class T, class Compare, class Allocator>
 	ft::pair<typename RedBlackTree<T, Compare, Allocator>::Node *, bool> RedBlackTree<T, Compare, Allocator>::_Emplace(Node **tree, const value_type & key) {
-		Node *parent;
-		if (*tree == NULL)
-			*parent = NULL;
-		else {
-			*parent = (*tree)->_Parent;
-			while (*tree) // move down till we met the greatest myval < key
+		// Node *parent;
+		// if (*tree == NULL)
+		// 	*parent = NULL;
+		// else {
+		// 	*parent = (*tree)->_Parent;
+		// 	while (*tree) // move down till we met the greatest myval < key
+		// 	{
+		// 		parent = *tree;
+		// 		if (_compare(key, (*tree)->_Myval)) // true if key < myval;
+		// 			*tree = &(*tree)->_Left; // go left to find node where myval < key
+		// 		else if (_compare((*tree)->_Myval), key)
+		// 			*tree = &(*tree)->_Right;
+		// 		else
+		// 			return ft::make_pair(*tree, false);
+		// 	}
+		// }
+		// *tree = _Buynode(key, parent, NULL, NULL, RED);
+		// _insertionFix(*tree);
+		// return ft::make_pair(*tree, true);
+		Node	*parent = *tree == NULL ? NULL : (*tree)->parent;
+
+		while (*tree != NULL)
+		{
+			if (_compare(key, (*tree)->value))
 			{
 				parent = *tree;
-				if (_compare(key, (*tree)->_Myval)) // true if key < myval;
-					*tree = &(*tree)->_Left; // go left to find node where myval < key
-				else if (_compare((*tree)->_Myval), key)
-					*tree = &(*tree)->_Right;
-				else
-					return ft::make_pair(*tree, true);
+				tree = &((*tree)->left);
 			}
+			else if (_compare((*tree)->value, key))
+			{
+				parent = *tree;
+				tree = &((*tree)->right);
+			}
+			else
+				return ft::make_pair(*tree, false);
 		}
 		*tree = _Buynode(key, parent, NULL, NULL, RED);
 		_insertionFix(*tree);
@@ -463,7 +493,7 @@ namespace ft {
 	// size_type erase(const value_type& _Keyval);
 
 
-	/* LOWER AND UPPER BOUND, EQUAL RANG --------------------------------------------------------------------------------------------------------------- */
+	/* LOWER AND UPPER BOUND, EQUAL RANGE --------------------------------------------------------------------------------------------------------------- */
 	// https://en.cppreference.com/w/cpp/algorithm/lower_bound
 	// Returns an iterator pointing to the first element that does not satisfy element < _Keyval (or comp(element, _Keyval)), 
 	// (i.e. greater or equal to), or last if no such element is found.

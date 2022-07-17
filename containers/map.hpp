@@ -5,10 +5,19 @@
 # include "../src/utils.hpp"
 # include <map>
 # include "../src/RedBlackTree.hpp"
-# include "../src/random_access_iterator.hpp"
+// # include "../src/TreeIterator.hpp"
 
 namespace ft
 {	
+	template <class Key, class T, class Compare>
+	struct PairCompare
+	{
+		bool	operator()(const ft::pair<const Key, T> & first, const ft::pair<const Key, T> & second) const
+		{
+			return Compare()(first.first, second.first);
+		}
+	};
+
 	template<
 	class Key,
 	class T,
@@ -29,6 +38,8 @@ namespace ft
 		typedef const value_type&					const_reference;
 		typedef typename Allocator::pointer			pointer;
 		typedef typename Allocator::const_pointer	const_pointer;
+		typedef PairCompare<Key, T, Compare>		pair_compare;
+
 
 		typedef Node<value_type>					node;
 		typedef node*								node_ptr;
@@ -38,7 +49,7 @@ namespace ft
 		// const_reverse_iterator	std::reverse_iterator<const_iterator>
 		
 		/* MEMBER CLASSES -----------------------------------------------*/
-		class value_compare
+		class value_compare: std::binary_function<value_type, value_type, bool>
 		{
 			friend class map<key_type, mapped_type, key_compare, allocator_type>;
 			protected:
@@ -48,7 +59,7 @@ namespace ft
 				bool operator()( const value_type& lhs, const value_type& rhs ) const {return (comp(lhs.first, rhs.first));}
 		};
 
-		typedef RedBlackTree<value_type, value_compare, allocator_type>	rbtree;
+		typedef RedBlackTree<ft::pair<const Key, T>, pair_compare, Allocator>	rbtree;
 
 	private:
 		allocator_type	_alloc;
@@ -57,15 +68,21 @@ namespace ft
 
 	public:
 		/* MEMBER FUNCTIONS -----------------------------------------------*/
-		map() : _alloc(allocator_type()), _comp(key_compare()), _tree(_comp, _alloc) {}
-		explicit map( const Compare& comp, const Allocator& alloc = Allocator() ) : _alloc(alloc), _comp(comp), _tree(comp, alloc) {}
+		map() : 
+			_alloc(allocator_type()), 
+			_comp(key_compare()), 
+			_tree() {}
+		explicit map( const Compare& comp, const Allocator& alloc = Allocator() ) : 
+			_alloc(alloc), 
+			_comp(comp),
+			_tree(comp, alloc) {}
 		template< class InputIt >
 		map( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _comp(comp), _tree(comp, alloc) {
 			_tree.insert(first, begin);
 		}
 		map( const map& other ) : _alloc(other._alloc), _comp(other._comp), _tree(other._tree) {}
 
-		~map();
+		~map() {}
 
 		map& operator=( const map& other ) {
 			if (this != &other) {
@@ -91,8 +108,11 @@ namespace ft
 				throw std::out_of_range("invalid map<K, T> key");
 			return it->second;
 		}
-		T& operator[]( const Key& key ) {return ((insert(ft::make_pair(key, mapped_type()))).first)->second;}
-		T& operator[]( Key&& key ) {return ((insert(ft::make_pair(key, mapped_type()))).first)->second;}
+		T& operator[]( const Key& key ) {
+			ft::pair<iterator, bool> it = insert(ft::make_pair(key, T()));
+			return (it.first)->second;
+		}
+		// T& operator[]( Key& key ) {return ((insert(ft::make_pair(key, mapped_type()))).first)->second;}
 
 		/* Iterators -----------------------------------------------*/
 		iterator begin() {return _tree.begin();}
@@ -113,8 +133,7 @@ namespace ft
 		void clear() {_tree.clear();}
 
 		ft::pair<iterator, bool> insert( const value_type& value ) {
-			ft::pair<iterator, bool> x = _tree.insert(value);
-			return (x);
+			return _tree.insert(value);
 		}
 		iterator insert( iterator hint, const value_type& value ) {_tree.insert(hint, value);}
 		template< class InputIt >
