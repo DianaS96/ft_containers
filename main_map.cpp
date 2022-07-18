@@ -11,10 +11,11 @@ void ft_print_map( ft::map<Key, T> & ft_map)
 }
 
 int main(void) {
-	ft::map<std::string, int>			ft_map;
-	ft::map<std::string, int>			ft_map_swap;
-	ft::map<std::string, int>::iterator	it1;
-	ft::map<std::string, int>::iterator	it2;
+	ft::map<std::string, int>				ft_map;
+	ft::map<std::string, int>				ft_map_swap;
+	ft::map<std::string, int>::iterator		it1;
+	ft::map<std::string, int>::iterator		it2;
+	ft::map<std::string, int>::key_compare	mycomp = ft_map.key_comp();
 	std::string							str;
 	for (char c = 'A'; c < 'G'; ++c)
 	{
@@ -87,6 +88,30 @@ int main(void) {
 	std::cout.fill('-');
 	std::cout.width(100);
 	std::cout << std::left << "Observers "<< NONE << std::endl;
+	it1 = ft_map.begin();
+	it2 = ft_map.end();
+	it2--;
+	it2--;
+	it2--;
+	std::cout << "(key_compare test) Print all values with key less than " << it2->second << std::endl;
+	while (mycomp((*it1).first, it2->first))
+	{
+		std::cout << it1->first << " => " << it1->second << "; ";
+		*it1++;
+	}
+	std::cout << std::endl;
+	
+	it1 = ft_map.begin();
+	it2 = ft_map.end();
+	it1++;
+	it1++;
+	it2--;
+	std::cout << "(key_compare test) Print all values with key from " << it1->second << " and less than " << it2->second << std::endl;
+	while (ft_map.value_comp()(*it1, *it2)) {
+		std::cout << it1->first << " => " << it1->second << "; ";
+		*it1++;
+	}
+	std::cout << std::endl;
 
 	/* Operations  ---------------------------------------------------------------------- */	
 	std::cout << FPURPLE;

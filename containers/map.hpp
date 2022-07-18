@@ -179,7 +179,7 @@ namespace ft
 		Returns a function object that compares objects of type std::map::value_type (key-value pairs) 
 		by using key_comp to compare the first components of the pairs.
 		*/
-		value_compare value_comp() const {return value_comp(key_compare());}
+		value_compare value_comp() const {return value_compare(key_comp());}
 	};
 		
 } // namespace ft
