@@ -144,9 +144,10 @@ namespace ft
 		size_type erase( const Key& key ) {return _tree.erase(ft::make_pair(key, mapped_type()));}
 
 		void swap( map& other ) {
-			std::swap(_tree, other._tree);
-			std::swap(_alloc, other._alloc);
-			std::swap(_comp, other._comp);
+			_tree.swap(other._tree);
+			// std::swap(_tree, other._tree);
+			// std::swap(_alloc, other._alloc);
+			// std::swap(_comp, other._comp);
 		}
 
 		/* Lookup -----------------------------------------------*/

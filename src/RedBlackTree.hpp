@@ -88,7 +88,7 @@ namespace ft {
 	    void insert(_Iter _First, _Iter _Last);
 
 		void erase(iterator _Where);
-		iterator erase(iterator _First, iterator _Last);
+		void erase(iterator _First, iterator _Last);
 		size_type erase(const value_type& _Keyval);
 
 		void clear();
@@ -137,9 +137,9 @@ namespace ft {
 	{
 		if (other_node == NULL)
 			return ;
-		current = _Buynode(other_node->value, curr_parent);
-		_copy_tree(current->left, current, other_node->left);
-		_copy_tree(current->right, current, other_node->right);
+		current = _Buynode(other_node->_Myval, curr_parent);
+		_copy_tree(current->_Left, current, other_node->_Left);
+		_copy_tree(current->_Right, current, other_node->_Right);
 	}
 
 	template <class T, class Compare, class Allocator>
@@ -147,8 +147,8 @@ namespace ft {
 	{
 		if (current == NULL)
 			return ;
-		_clear_tree(current->left);
-		_clear_tree(current->right);
+		_clear_tree(current->_Left);
+		_clear_tree(current->_Right);
 		_delete_node(current);
 	}
 
@@ -344,7 +344,7 @@ namespace ft {
 		Node *child, *parent;
 		int col;
 
-		if (!node->_Left && !node->_Right) // 2 children
+		if (node->_Left && node->_Right) // 2 children
 		{
 			Node *replace = node->_Right;
 			while (replace->_Left)
@@ -481,7 +481,11 @@ namespace ft {
 		_erase_node(_Where.nodePtr);
 	}
 
-	// iterator erase(iterator _First, iterator _Last);
+	template <class T, class Compare, class Allocator>
+	void RedBlackTree<T, Compare, Allocator>::erase(iterator _First, iterator _Last) {
+		for (; _First != _Last; ++_First)
+			_erase_node(_First.nodePtr);
+	}
 	// size_type erase(const value_type& _Keyval);
 
 

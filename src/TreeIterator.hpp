@@ -24,7 +24,7 @@ public:
     // used to construct an iterator return value from a node pointer
     TreeIterator (Node *p, Node *r) : nodePtr(p), root(r) {};
 	
-	TreeIterator() {printf("first constructor\n");};
+	TreeIterator() {};
 	TreeIterator(const TreeIterator& other) : nodePtr(other.nodePtr), root(other.root) {};
 
 	TreeIterator &operator=(const TreeIterator& other) {
