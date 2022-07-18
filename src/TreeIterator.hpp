@@ -12,21 +12,20 @@ namespace ft {
 template <class T>
 class TreeIterator : public ft::iterator< std::bidirectional_iterator_tag, T>
 {
-public:
-
 public:    
     // nodePtr is the current location in the tree. we can move
     // freely about the tree using left, right, and parent.
     // root - root pointer of the tree, which is needed for ++ and --
     // when the iterator value is end()
-    Node<T> *nodePtr;
-	Node<T> *root;
+    typedef Node<T> Node;
+	Node *nodePtr;
+	Node *root;
     
     // used to construct an iterator return value from a node pointer
-    TreeIterator (const Node<T> *p, const Node<T> *r) : nodePtr(p), root(r) {}
+    TreeIterator (Node *p, Node *r) : nodePtr(p), root(r) {};
 	
-	TreeIterator() {}
-	TreeIterator(const TreeIterator& other) : nodePtr(other.nodePtr), root(other.root) {}
+	TreeIterator() {};
+	TreeIterator(const TreeIterator& other) : nodePtr(other.nodePtr), root(other.root) {};
 
 	TreeIterator &operator=(const TreeIterator& other) {
 		nodePtr = other.nodePtr;
@@ -36,9 +35,9 @@ public:
 
 	~TreeIterator() {}
 
-	bool operator==(const TreeIterator& rhs) const {return (nodePtr == rhs.nodePtr);}
+	friend bool operator==(TreeIterator lhs, TreeIterator rhs) {return (lhs.nodePtr == rhs.nodePtr);}
     
-    bool operator!=(const TreeIterator& rhs) const {return (nodePtr != rhs.nodePtr);}
+    friend bool operator!=(TreeIterator lhs, TreeIterator rhs) {return (lhs.nodePtr != rhs.nodePtr);}
     
     // dereference operator. return a reference to the value pointed to by nodePtr
     T& operator*() {return nodePtr->_Myval;}
@@ -119,7 +118,12 @@ template <class T>
 class TreeConstIterator : public ft::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
 {
 public:
-	TreeConstIterator() {}
+    typedef Node<T> Node;
+	Node *nodePtr;
+	Node *root;
+    
+    TreeConstIterator (const Node *p, const Node *r) : nodePtr(p), root(r) {}
+	TreeConstIterator() {};
 	TreeConstIterator(const TreeConstIterator& other) : nodePtr(other.nodePtr), root(other.root) {}
 
 	TreeConstIterator &operator=(const TreeConstIterator& other) {
@@ -130,9 +134,9 @@ public:
 
 	~TreeConstIterator() {}
 
-	bool operator==(const TreeConstIterator& rhs) const {return (nodePtr == rhs.nodePtr);}
+	friend bool operator==(TreeConstIterator lhs, TreeConstIterator rhs) {return (lhs.nodePtr == rhs.nodePtr);}
     
-    bool operator!=(const TreeConstIterator& rhs) const {return (nodePtr != rhs.nodePtr);}
+    friend bool operator!=(TreeConstIterator lhs, TreeConstIterator rhs) {return (lhs.nodePtr != rhs.nodePtr);}
     
     const T& operator*() const {return nodePtr->_Myval;}
     
@@ -200,87 +204,7 @@ public:
 		return (clone);
 	}
 
-public:    
-    const Node<T> *nodePtr;
-	const Node<T> *root;
-    
-    TreeConstIterator (const Node<T> *p, const Node<T> *r) : nodePtr(p), root(r) {}
 };
-
-// /*--------------------------------------- rev_random_access_iterator ---------------------------------------*/
-// template <class Iterator>
-// class rev_random_access_iterator : public ft::iterator<typename ft::iterator_traits<Iterator *>::iterator_category, 
-// 													typename ft::iterator_traits<Iterator *>::value_type,
-// 													typename ft::iterator_traits<Iterator *>::difference_type,
-// 													typename ft::iterator_traits<Iterator *>::pointer,
-// 													typename ft::iterator_traits<Iterator *>::reference>
-// {
-// private:
-// 	/* data */
-// public:
-// 	typedef Iterator												iterator_type;
-// 	typedef typename ft::iterator_traits<Iterator>::value_type		value_type;
-// 	typedef typename ft::iterator_traits<Iterator>::difference_type	difference_type;
-// 	typedef typename ft::iterator_traits<Iterator>::pointer			pointer;
-// 	typedef typename ft::iterator_traits<Iterator>::reference		reference;
-
-// 	rev_random_access_iterator() : current() {}
-// 	rev_random_access_iterator(iterator_type _x) : current(_x) {}
-// 	rev_random_access_iterator(const rev_random_access_iterator& _x) : current(_x.current) {}
-// 	rev_random_access_iterator &operator=(const rev_random_access_iterator& _x) {
-// 		if (this != &_x)
-// 			current = _x.current;
-// 		return (*this);
-// 	}
-
-// 	~rev_random_access_iterator() {}
-
-// 	bool operator==(const rev_random_access_iterator& _x) {return (current == _x.current);}
-// 	bool operator!=(const rev_random_access_iterator& _x) {return (current != _x.current);}
-// 	bool operator>(const rev_random_access_iterator& _x) {return (current > _x.current);}
-// 	bool operator>=(const rev_random_access_iterator& _x) {return (current >= _x.current);}
-// 	bool operator<(const rev_random_access_iterator& _x) {return (current < _x.current);}
-// 	bool operator<=(const rev_random_access_iterator& _x) {return (current <= _x.current);}
-	
-// 	reference operator*() const {
-// 		iterator_type	tmp = current;
-// 		return (*(--tmp));
-// 	}
-// 	pointer operator->() const {return &(operator*());}
-// 	rev_random_access_iterator &operator++() {
-// 		--current;
-// 		return (*this);
-// 	}
-// 	rev_random_access_iterator operator++(int) {
-// 		rev_random_access_iterator tmp = *this;
-// 		--current;
-// 		return (tmp);
-// 	}
-// 	rev_random_access_iterator &operator--() {
-// 		++current;
-// 		return (*this);
-// 	}
-// 	rev_random_access_iterator operator--(int) {
-// 		rev_random_access_iterator tmp = *this;
-// 		++current;
-// 		return (tmp);
-// 	}
-
-// 	reference operator[](difference_type n) const {return (current[n]);}
-// 	rev_random_access_iterator &operator+=(difference_type n) {
-// 		current -= n;
-// 		return (*this);
-// 		}
-// 	rev_random_access_iterator &operator-=(difference_type n) {
-// 		current += n;
-// 		return (*this);
-// 		}
-// 	rev_random_access_iterator &operator+(difference_type n) {rev_random_access_iterator(current - n);}
-// 	rev_random_access_iterator &operator-(difference_type n) {rev_random_access_iterator(current + n);}
-
-// protected:
-// 	Iterator	current;
-// };
 
 }
 

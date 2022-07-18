@@ -43,8 +43,8 @@ namespace ft
 
 		typedef Node<value_type>					node;
 		typedef node*								node_ptr;
-		typedef ft::TreeIterator<value_type>		iterator;
-		typedef ft::TreeConstIterator<value_type>	const_iterator;
+		typedef ft::TreeIterator<ft::pair<const Key, T> >		iterator;
+		typedef ft::TreeConstIterator<ft::pair<const Key, T> >	const_iterator;
 		// reverse_iterator	std::reverse_iterator<iterator>
 		// const_reverse_iterator	std::reverse_iterator<const_iterator>
 		

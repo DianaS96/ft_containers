@@ -13,8 +13,8 @@ namespace ft
 		bool	_Color; //Red or Black, Black if head
 		T		_Myval; // the stored value, unused if head
 
-        Node(const T & elem = NULL, Node *lt = NULL, Node *rt = NULL, Node *par = NULL, bool col = RED) : 
-        _Myval(elem), _Left(lt), _Right(rt), _Parent(par), _Color(col) {}
+        Node(const T & elem, Node *lt = NULL, Node *rt = NULL, Node *par = NULL, bool col = RED) : 
+        _Left(lt), _Right(rt), _Parent(par), _Color(col), _Myval(elem) {}
 	};
 } // namespace ft
 

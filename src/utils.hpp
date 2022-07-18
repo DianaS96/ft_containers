@@ -140,14 +140,14 @@ struct pair
     template< class U1, class U2 >
     pair( const pair<U1, U2>& p ) : first(p.first), second(p.second) {}
 
-    pair& operator=( const pair& other ) {
-    	if (this != &other)
-        {
-            first = other.first;
-            second = other.second;
-        }
-        return (*this);
-    }
+    // pair& operator=( const pair& other ) {
+    // 	if (this != &other)
+    //     {
+    //         first = other.first;
+    //         second = other.second;
+    //     }
+    //     return (*this);
+    // }
 };
 
 /* Creates a pair object, deducing the target type from the types of arguments. */
