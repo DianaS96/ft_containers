@@ -27,8 +27,8 @@ namespace ft {
 		typedef typename allocator_type::template rebind<Node>::other	node_allocator;
 		
 		/*-------------------- Iterators --------------------*/
-		typedef ft::TreeIterator<T>			iterator;
-		typedef ft::TreeConstIterator<T>			const_iterator;
+		typedef ft::TreeIterator<value_type>			iterator;
+		typedef ft::TreeConstIterator<value_type>			const_iterator;
 		// typedef TreeIterator<value_type>				reverse_iterator;
 		// typedef TreeConstIterator<value_type>				const_reverse_iterator;
 	

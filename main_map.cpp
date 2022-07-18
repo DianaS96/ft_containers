@@ -5,7 +5,7 @@ int main(void) {
     ft::map<std::string, int> ft_map;
     // ft_map.empty();
     ft_map["a"] = 1;
-    ft::map<std::string, int>::iterator it;
+    ft::map<std::string, int>::const_iterator it;
     it = ft_map.begin();
 	for (; it != ft_map.end(); ++it) {
 		std::cout << it->first << ": " << it->second << ' ';
