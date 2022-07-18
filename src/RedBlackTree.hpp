@@ -87,7 +87,7 @@ namespace ft {
 		template <class _Iter>
 	    void insert(_Iter _First, _Iter _Last);
 
-		iterator erase(iterator _Where);
+		void erase(iterator _Where);
 		iterator erase(iterator _First, iterator _Last);
 		size_type erase(const value_type& _Keyval);
 
@@ -271,11 +271,6 @@ namespace ft {
 	template <class T, class Compare, class Allocator>
 	ft::pair<typename RedBlackTree<T, Compare, Allocator>::Node *, bool> RedBlackTree<T, Compare, Allocator>::_Emplace(Node **tree, const value_type & key) {
 		Node	*parent = *tree == NULL ? NULL : (*tree)->_Parent;
-		// Node *parent;
-		// if (*tree == NULL)
-		// 	*parent = NULL;
-		// else {
-		// 	*parent = (*tree)->_Parent;
 		while (*tree) // move down till we met the greatest myval < key
 		{
 			parent = *tree;
@@ -405,18 +400,6 @@ namespace ft {
 		if (col == BLACK)
 			_fixErase(_root, child, parent);
 		_delete_node(node);
-		// Node *tmp = node;
-		// if (!tmp->_Left && !tmp->_Right) // node has no children
-		// {
-		// 	if (tmp->_Color == RED) // If color is red - delete node without cons.
-		// 	{
-		// 		_delete_node(node);
-		// 		node = NULL;
-		// 	}
-		// 	else {
-
-		// 	}
-		// }
 	}
 
 	template <class T, class Compare, class Allocator>
@@ -494,7 +477,7 @@ namespace ft {
 	}
 
 	template <class T, class Compare, class Allocator>
-	typename RedBlackTree<T, Compare, Allocator>::iterator RedBlackTree<T, Compare, Allocator>::erase(typename RedBlackTree<T, Compare, Allocator>::iterator _Where) {
+	void RedBlackTree<T, Compare, Allocator>::erase(iterator _Where) {
 		_erase_node(_Where.nodePtr);
 	}
 
@@ -601,7 +584,7 @@ namespace ft {
 	template <class T, class Compare, class Allocator>
 	void RedBlackTree<T, Compare, Allocator>::_delete_node(Node *node) {
 		_node_alloc.destroy(node);
-		_node_alloc.destruct(node, 1);
+		_node_alloc.deallocate(node, 1);
 		_size -= 1;
 	}
 

@@ -28,7 +28,6 @@ public:
 	TreeIterator(const TreeIterator& other) : nodePtr(other.nodePtr), root(other.root) {};
 
 	TreeIterator &operator=(const TreeIterator& other) {
-		printf("equal operator\n");
 		nodePtr = other.nodePtr;
 		root = other.root;
 		return (*this);
