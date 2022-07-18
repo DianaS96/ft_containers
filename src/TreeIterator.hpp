@@ -125,7 +125,7 @@ public:
 	Node *nodePtr;
 	Node *root;
     
-    TreeConstIterator (const Node *p, const Node *r) : nodePtr(p), root(r) {}
+    TreeConstIterator (Node *p, Node *r) : nodePtr(p), root(r) {}
 	TreeConstIterator() {};
 	TreeConstIterator(const TreeConstIterator& other) : nodePtr(other.nodePtr), root(other.root) {}
 	TreeConstIterator(const ft::TreeIterator<T>& other) : nodePtr(other.nodePtr), root(other.root) {}

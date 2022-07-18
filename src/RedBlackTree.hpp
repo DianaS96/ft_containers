@@ -293,18 +293,20 @@ namespace ft {
 		{
 			if (node == node->_Parent->_Left) /* check whether node is left child */
 			{
-				if (node->_Parent->_Parent->_Right->_Color && node->_Parent->_Parent->_Right->_Color == RED) /* red uncle */
+				if (node->_Parent->_Parent->_Right && node->_Parent->_Parent->_Right->_Color == RED) /* red uncle */
 				{
 					node->_Parent->_Color = BLACK;
 					node->_Parent->_Parent->_Right->_Color = BLACK;
 					node->_Parent->_Parent->_Color = RED;
 					node = node->_Parent->_Parent;
+					continue;
 				}
 				else // uncle is black or there is no uncle
 				{
 					node->_Parent->_Color = BLACK;
 					node->_Parent->_Parent->_Color = RED;
 					_Rrotate(node->_Parent->_Parent);
+					break;
 				}
 			}
 			else {
@@ -314,11 +316,13 @@ namespace ft {
 					node->_Parent->_Parent->_Left->_Color = BLACK;
 					node->_Parent->_Parent->_Color = RED;
 					node = node->_Parent->_Parent;
+					continue;
 				}
 				else {
 					node->_Parent->_Color = BLACK;
 					node->_Parent->_Parent->_Color = RED;
 					_Lrotate(node->_Parent->_Parent);
+					break;
 				}
 			}
 		}
@@ -482,9 +486,8 @@ namespace ft {
 		for (; _First != _Last;)
 		{
 			printf("in erase cycle before erase\n");
-			_erase_node((_First).nodePtr);
+			_erase_node((_First++).nodePtr);
 			printf("in erase cycle after erase\n");
-			_First++;
 		}
 		printf("After cycle\n");
 	}

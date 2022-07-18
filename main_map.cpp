@@ -13,30 +13,22 @@ void ft_print_map( ft::map<Key, T> & ft_map)
 int main(void) {
 	ft::map<std::string, int>				ft_map;
 	ft::map<std::string, int>				ft_map_swap;
-	ft::map<std::string, int>::iterator		it1;
-	ft::map<std::string, int>::iterator		it2;
+	ft::map<std::string, int>::iterator		it1, it2, itlow, itup;
 	ft::map<std::string, int>::key_compare	mycomp = ft_map.key_comp();
-	std::string							str;
-	printf("Hi again!\n");
+	std::string								str;
 	for (char c = 'A'; c < 'G'; ++c)
 	{
-		printf("Hi again!\n");
 		str = c;
 		ft_map_swap[str] = c;
 	}
-	printf("Hi again!\n");
 	ft_map["a"] = 1;
-	printf("Hi again!\n");
 	ft_map["b"] = 2;
 	ft_map["d"] = 3;
 	ft_map["c"] = 4;
 	ft_map["e"] = 5;
 	ft_map["t"] = 6;
-	printf("Hi again!\n");
 	ft_map["f"] = 8;
-	printf("Hi again!\n");
 	ft_map["g"] = 7;
-	printf("Hi again!\n");
 	ft_print_map(ft_map);
 	/* Capacity ---------------------------------------------------------------------- */
 	std::cout << FPURPLE;
@@ -58,6 +50,7 @@ int main(void) {
 	std::cout << std::left << "Element access "<< NONE << std::endl;
 	std::cout << "Change map[a] value (new val - 10)" << std::endl;
 	ft_map["a"] = 10;
+	ft_print_map(ft_map);
 	std::cout << "Access invalid key with at" << std::endl;
 	try
 	{
@@ -81,16 +74,16 @@ int main(void) {
 	it1 = ft_map.find("c");
 	ft_map.erase(it1);
 	ft_print_map(ft_map);
-	std::cout << "Remove map[e] - map[g]" << std::endl;
-	it1 = ft_map.find("e");
-	printf("Found e\n");
-	it2 = ft_map.find("g");
-	printf("Found g\n");
-	ft_map.erase(it1, it2);
-	ft_print_map(ft_map);
+	// std::cout << "Remove map[e] - map[g]" << std::endl;
+	// it1 = ft_map.find("e");
+	// printf("Found e\n");
+	// it2 = ft_map.find("g");
+	// printf("Found g\n");
+	// ft_map.erase(it1, it2);
+	// ft_print_map(ft_map);
 	std::cout << "Swap maps" << std::endl;
 	ft_map_swap.swap(ft_map);
-	ft_map["Z"] = -1;
+	ft_map["W"] = -1;
 	ft_map["G"] = 100;
 	ft_print_map(ft_map);
 
@@ -116,19 +109,42 @@ int main(void) {
 	it2 = ft_map.end();
 	it1++;
 	it1++;
-	it2--;
-	std::cout << "(key_compare test) Print all values with key from " << it1->second << " and less than " << it2->second << std::endl;
-	while (ft_map.value_comp()(*it1, *it2)) {
-		std::cout << it1->first << " => " << it1->second << "; ";
-		*it1++;
-	}
-	std::cout << std::endl;
+	// it2--;
+	// std::cout << "(key_compare test) Print all values with key from " << it1->second << " and less than " << it2->second << std::endl;
+	// while (ft_map.value_comp()(*it1, *it2)) {
+	// 	std::cout << it1->first << " => " << it1->second << "; ";
+	// 	*it1++;
+	// }
+	// std::cout << std::endl;
 
 	/* Operations  ---------------------------------------------------------------------- */	
 	std::cout << FPURPLE;
 	std::cout.fill('-');
 	std::cout.width(100);
 	std::cout << std::left << "Operations "<< NONE << std::endl;
+	
+	std::cout << "(test for find) ft_map[W]: " << ft_map.find("W")->second << std::endl;
+
+	for (char ch = 'F'; ch < 'I'; ++ch)
+	{
+		str = ch;
+		if (ft_map.count(str) > 0)
+			std::cout << "(test for count) " << str << " key is in my map" << std::endl;
+		else
+			std::cout << "(test for count) " << str << " key is NOT in my map" << std::endl;
+	}
+
+	itlow = ft_map.lower_bound("B");
+	itup = ft_map.upper_bound("B");
+	std::cout << "(test for lower_bound) key: " << itlow->first << " value: " << itlow->second << std::endl;
+	std::cout << "(test for upper_bound) key: " << itup->first << " value: " << itup->second << std::endl;
+  	ft::pair<ft::map<std::string,int>::iterator,ft::map<std::string,int>::iterator> ret;
+	ret = ft_map.equal_range("B");
+	std::cout << "(test for equal_range) lower bound points to: ";
+	std::cout << ret.first->first << " => " << ret.first->second << '\n';
+	std::cout << "(test for equal_range) upper bound points to: ";
+	std::cout << ret.second->first << " => " << ret.second->second << '\n';
+
 
 	return (0);
 }
