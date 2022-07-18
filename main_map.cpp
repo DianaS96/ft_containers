@@ -17,19 +17,26 @@ int main(void) {
 	ft::map<std::string, int>::iterator		it2;
 	ft::map<std::string, int>::key_compare	mycomp = ft_map.key_comp();
 	std::string							str;
+	printf("Hi again!\n");
 	for (char c = 'A'; c < 'G'; ++c)
 	{
+		printf("Hi again!\n");
 		str = c;
 		ft_map_swap[str] = c;
 	}
+	printf("Hi again!\n");
 	ft_map["a"] = 1;
+	printf("Hi again!\n");
 	ft_map["b"] = 2;
 	ft_map["d"] = 3;
 	ft_map["c"] = 4;
 	ft_map["e"] = 5;
-	// ft_map["t"] = 6;
+	ft_map["t"] = 6;
+	printf("Hi again!\n");
 	ft_map["f"] = 8;
+	printf("Hi again!\n");
 	ft_map["g"] = 7;
+	printf("Hi again!\n");
 	ft_print_map(ft_map);
 	/* Capacity ---------------------------------------------------------------------- */
 	std::cout << FPURPLE;
@@ -76,11 +83,15 @@ int main(void) {
 	ft_print_map(ft_map);
 	std::cout << "Remove map[e] - map[g]" << std::endl;
 	it1 = ft_map.find("e");
+	printf("Found e\n");
 	it2 = ft_map.find("g");
+	printf("Found g\n");
 	ft_map.erase(it1, it2);
 	ft_print_map(ft_map);
 	std::cout << "Swap maps" << std::endl;
 	ft_map_swap.swap(ft_map);
+	ft_map["Z"] = -1;
+	ft_map["G"] = 100;
 	ft_print_map(ft_map);
 
 	/* Observers  ---------------------------------------------------------------------- */	

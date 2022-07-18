@@ -112,7 +112,6 @@ namespace ft
 			ft::pair<iterator, bool> it = insert(ft::make_pair(key, T()));
 			return (it.first)->second;
 		}
-		// T& operator[]( Key& key ) {return ((insert(ft::make_pair(key, mapped_type()))).first)->second;}
 
 		/* Iterators -----------------------------------------------*/
 		iterator begin() {return _tree.begin();}

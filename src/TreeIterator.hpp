@@ -60,8 +60,11 @@ public:
 			if (nodePtr->_Right != NULL)
 			{
 				nodePtr = nodePtr->_Right;
-				while (nodePtr->_Left != NULL)
+				while (nodePtr->_Left)
+				{
+					// printf("smwhere\n");
 					nodePtr = nodePtr->_Left;
+				}
 			}
 			else {
 				while (nodePtr->_Parent && nodePtr == nodePtr->_Parent->_Right)
