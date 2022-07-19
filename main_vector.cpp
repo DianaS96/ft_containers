@@ -61,10 +61,6 @@ void	ft_print_stats(ft::vector<T> &ft_vec, std::vector<T> &std_vec, get_data dat
 {
 	const char	*color = FGREEN;
 
-	// std::cout << "ft_s: " << ft_vec.size() << " ft_cap: " << ft_vec.capacity() << std::endl;
-	// std::cout << "_s: " << std_vec.size() << " std_cap: " << std_vec.capacity() << std::endl;
-	// std::cout << "back: " << ft_vec.back() << std::endl;
-
 	if (data.time_dif_perc > 2000)
 		color = FRED;
 	std::cout.precision(5);
@@ -404,6 +400,8 @@ ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
 	std_vec.insert(std_it, val);
 	Timer::Stop();
 	ms_double_std = Timer::getRes();
+	std::cout << "ft: " << ft_vec.size() << " and " << ft_vec.capacity() << std::endl;
+	std::cout << "std: " << std_vec.size() << " and " << std_vec.capacity() << std::endl;
 	ft_fill_data("insert", ms_double_ft, ms_double_std, data);
 	ft_print_stats(ft_vec, std_vec, data, res);
 }
@@ -604,7 +602,8 @@ int main(void) {
 	ft::vector<int> tmp_ft;
 	std::vector<int> tmp_std;
   	// time_t begin, end;
-	double ms_double_ft, ms_double_std;
+	double ms_double_ft = 0.0;
+	double ms_double_std = 0.0;
 	for (size_t i = 0; i < 20; ++i)
 	{
 		tmp_ft.push_back(i);

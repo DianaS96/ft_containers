@@ -381,7 +381,8 @@ typename vector<T, Allocator>::size_type vector<T, Allocator>::size() const {
 // https://en.cppreference.com/w/cpp/container/vector/max_size
 template <class T, class Allocator>
 typename vector<T, Allocator>::size_type vector<T, Allocator>::max_size() const {
-	return (std::numeric_limits<size_type>::max() / sizeof(size_type));
+	// return (std::numeric_limits<size_type>::max() / sizeof(vector));
+	return (_alloc.max_size());
 }
 
 template <class T, class Allocator>
@@ -485,20 +486,10 @@ template <class T, class Allocator>
 void vector<T, Allocator>::insert( iterator pos, size_type count, const T& value ) {
 	size_type	pos_idx = 0;
 	size_type	i = 0;
-        // const size_type _Geometric = _Oldcapacity + _Oldcapacity / 2;
-
-        // if (_Geometric < _Newsize) {
-        //     return _Newsize; // geometric growth would be insufficient
-        // }
-
-        // return _Geometric; // geometric growth is sufficient
-
 
 	for (iterator it = begin(); it != pos; ++it, ++pos_idx);
-	if (_size == _capacity)
+	if (_capacity < _size + count)
 		reserve(_capacity * 2);
-	if (_size + count >= _capacity)
-		reserve(_size + count);
 	// Create tmp array and fill it with all elements from _array until pos.
 	T *newarr = _alloc.allocate(_capacity);
 	try {
@@ -556,15 +547,8 @@ typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, In
 
 	for (InputIt it = first; it != last; ++it, ++count);
 	for (InputIt it = begin(); it != pos; ++it, ++pos_idx);
-	if (_size == _capacity)
-		reserve(_capacity * 2);
-	if (_size + count > _capacity)
-	{
-		if (_size * 2 > _size + count)
-			new_cap = _size * 2;
-		else
-			new_cap = _size + count;
-	}
+	if (_capacity < _size + count)
+		new_cap = _capacity * 2;
 	else
 		new_cap = _capacity;
 	// Create tmp array and fill it with all elements from _array until pos.
