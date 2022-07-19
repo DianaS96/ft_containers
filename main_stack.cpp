@@ -92,7 +92,7 @@ void	ft_fill_data(std::string test_name, double &ms_double_ft, double &ms_double
 	data.time_dif_perc = (data.time_dif / data.std_time) * 100;	
 }
 
-template < class T, class Container = ft::vector<T>, class Cont = std::vector<T> >
+template < class T, class Container, class Cont >
 void	ft_top_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
 ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack)
 {
@@ -114,7 +114,7 @@ ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack)
 	ft_print_stats(data, res);
 }
 
-template < class T, class Container = ft::vector<T>, class Cont = std::vector<T> >
+template < class T, class Container, class Cont >
 void	ft_empty_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
 ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	int		res = BAD_RETURN_VALUE;
@@ -135,7 +135,7 @@ ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	ft_print_stats(data, res);
 }
 
-template < class T, class Container = ft::vector<T>, class Cont = std::vector<T> >
+template < class T, class Container, class Cont >
 void	ft_size_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
 ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	int		res = BAD_RETURN_VALUE;
@@ -156,7 +156,7 @@ ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	ft_print_stats(data, res);
 }
 
-template < class T, class Container = ft::vector<T>, class Cont = std::vector<T> >
+template < class T, class Container, class Cont >
 void	ft_push_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
 ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	int		res = 0;
@@ -176,7 +176,7 @@ ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	ft_print_stats(data, res);
 }
 
-template < class T, class Container = ft::vector<T>, class Cont = std::vector<T> >
+template < class T, class Container , class Cont >
 void	ft_pop_test(double &ms_double_ft, double &ms_double_std, get_data &data, \
 ft::stack<T, Container> &ft_stack, std::stack<T, Cont> &std_stack) {
 	int		res = 0;
@@ -237,10 +237,7 @@ int main(void) {
 	std::stack<int, std::vector<int> >	std_tmp(std_stack);
 
 	if (ft_tmp == ft_stack)
-		std::cout << "== " << "ok" << std::endl;
-
-	if (std_tmp == std_stack)
-		std::cout << "== " << "ok" << std::endl;
+		std::cout << "operator== " << "works correctly, ft_tmp is equal to ft_stack." << std::endl;
 
 	std::cout << std::endl;
 	std::cout << "Overall results:" << std::endl;
