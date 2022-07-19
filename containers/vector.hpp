@@ -28,10 +28,10 @@ template <
 		typedef typename allocator_type::pointer		pointer;
 		typedef typename allocator_type::const_pointer	const_pointer;
 
-		typedef ft::random_access_iterator<T>				iterator;
+		typedef ft::random_access_iterator<T>			iterator;
 		typedef ft::random_access_iterator<const T>		const_iterator;
-		typedef ft::rev_random_access_iterator<T>			reverse_iterator;
-		typedef ft::rev_random_access_iterator<const T>	const_reverse_iterator;
+		typedef ft::rev_random_access_iterator<iterator>		reverse_iterator;
+		typedef ft::rev_random_access_iterator<const_iterator>	const_reverse_iterator;
 
 	/*-------------------- MEMBER FUNCTIONS --------------------*/
 		/* Default constructor. Constructs an empty container with a default-constructed allocator. */
@@ -248,8 +248,6 @@ template <class T, class Allocator>
 void vector<T, Allocator>::assign( size_type count, const T& value ) {
 	size_type	i = 0;
 
-	if (_capacity == 0 )
-		_array = _alloc.allocate(count);
 	for (i = 0; i < _size; i++)
 		_alloc.destroy(_array + i);
 	if (_capacity < count)

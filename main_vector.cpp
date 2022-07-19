@@ -1,5 +1,6 @@
 #include <vector>
 #include "containers/vector.hpp"
+#include "src/utils2.hpp"
 
 class Timer
 {
@@ -766,5 +767,7 @@ int main(void) {
 	std::cout << "Diff, ms: " << data.ft_total_time - data.std_total_time << std::endl;
 	std::cout << "Diff, %: " << (data.ft_total_time - data.std_total_time) / data.std_total_time << std::endl;
 
+	ft_vec.push_back(*(ft_vec.end() - 2));
+	ft_vec.push_back(*(ft_vec.rbegin() + 1));
 	return (0);
 }

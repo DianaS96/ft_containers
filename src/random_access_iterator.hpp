@@ -71,9 +71,9 @@ public:
 		current -= n;
 		return (*this);
 		}
-	random_access_iterator &operator+(difference_type n) {return random_access_iterator(current + n);}
+	random_access_iterator operator+(difference_type n) {return random_access_iterator(current + n);}
 
-	random_access_iterator &operator-(difference_type n) {return random_access_iterator(current - n);}
+	random_access_iterator operator-(difference_type n) {return random_access_iterator(current - n);}
 
 	difference_type operator-(const random_access_iterator & rhs)
 	{
@@ -86,17 +86,16 @@ protected:
 
 /*--------------------------------------- rev_random_access_iterator ---------------------------------------*/
 template <class Iterator>
-class rev_random_access_iterator : public ft::iterator<typename ft::iterator_traits<Iterator *>::iterator_category, 
-													typename ft::iterator_traits<Iterator *>::value_type,
-													typename ft::iterator_traits<Iterator *>::difference_type,
-													typename ft::iterator_traits<Iterator *>::pointer,
-													typename ft::iterator_traits<Iterator *>::reference>
+class rev_random_access_iterator : public ft::iterator<typename ft::iterator_traits<Iterator>::iterator_category, 
+													typename ft::iterator_traits<Iterator>::value_type,
+													typename ft::iterator_traits<Iterator>::difference_type,
+													typename ft::iterator_traits<Iterator>::pointer,
+													typename ft::iterator_traits<Iterator>::reference>
 {
 private:
 	/* data */
 public:
 	typedef Iterator												iterator_type;
-	typedef typename ft::iterator_traits<Iterator>::value_type		value_type;
 	typedef typename ft::iterator_traits<Iterator>::difference_type	difference_type;
 	typedef typename ft::iterator_traits<Iterator>::pointer			pointer;
 	typedef typename ft::iterator_traits<Iterator>::reference		reference;
@@ -148,12 +147,12 @@ public:
 		current -= n;
 		return (*this);
 		}
-	rev_random_access_iterator &operator-=(difference_type n) {
+	rev_random_access_iterator operator-=(difference_type n) {
 		current += n;
 		return (*this);
 		}
-	rev_random_access_iterator &operator+(difference_type n) {rev_random_access_iterator(current - n);}
-	rev_random_access_iterator &operator-(difference_type n) {rev_random_access_iterator(current + n);}
+	rev_random_access_iterator operator+(difference_type n) {return rev_random_access_iterator(current - n);}
+	rev_random_access_iterator operator-(difference_type n) {return rev_random_access_iterator(current + n);}
 
 protected:
 	Iterator	current;
