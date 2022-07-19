@@ -119,7 +119,7 @@ template <
 		/* Removes the last element of the container. */
 		void pop_back();
 		/* Resizes the container to contain count elements. */
-		void resize( size_type count, T value );
+		void resize( size_type count, T value = T());
 		/* Exchanges the contents of the container with those of other. */
 		void swap( vector& other );
 
@@ -701,7 +701,7 @@ void vector<T, Allocator>::pop_back() {
 }
 
 template <class T, class Allocator>
-void vector<T, Allocator>::resize( size_type count, T value ) {
+void vector<T, Allocator>::resize( size_type count, T value) {
 	size_type i;
 
 	if (count < _size)
