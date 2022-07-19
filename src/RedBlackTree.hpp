@@ -28,9 +28,9 @@ namespace ft {
 		
 		/*-------------------- Iterators --------------------*/
 		typedef ft::TreeIterator<value_type>			iterator;
-		typedef ft::TreeConstIterator<value_type>			const_iterator;
-		// typedef TreeIterator<value_type>				reverse_iterator;
-		// typedef TreeConstIterator<value_type>				const_reverse_iterator;
+		typedef ft::TreeConstIterator<value_type>		const_iterator;
+		typedef ft::TreeReverseIterator<value_type>		reverse_iterator;
+		// typedef TreeConstIterator<value_type>		const_reverse_iterator;
 	
 	private:
 		allocator_type	_alloc;
@@ -72,8 +72,8 @@ namespace ft {
 		iterator end();
 		const_iterator begin() const;
 		const_iterator end() const;
-		// reverse_iterator rbegin();
-		// reverse_iterator rend();
+		reverse_iterator rbegin();
+		reverse_iterator rend();
 		// const_reverse_iterator rbegin() const;
 		// const_reverse_iterator rend() const;
 
@@ -125,9 +125,9 @@ namespace ft {
 
 		ft::pair<Node *, bool> _Emplace(Node **tree, const value_type & key);
 		void _insertionFix(Node *node);
-
+		void rbTransplant(Node *u, Node *v);
 		void _erase_node(Node *node);
-		void _fixErase(Node *&root, Node *node, Node *parent);
+		void _fixErase(Node *node);
 		void _delete_node(Node *node);
 		Node *_find_node(const value_type& _Keyval) const;
 	};
@@ -176,6 +176,24 @@ namespace ft {
 	
 	template <class T, class Compare, class Allocator>
 	typename RedBlackTree<T, Compare, Allocator>::const_iterator RedBlackTree<T, Compare, Allocator>::end() const {return const_iterator(NULL, _root);}
+
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::reverse_iterator RedBlackTree<T, Compare, Allocator>::rbegin() {
+		Node *tmp = _root;
+		while (tmp && tmp->_Right)
+			tmp = tmp->_Right;
+		return reverse_iterator(tmp, _root);
+	}
+
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::reverse_iterator RedBlackTree<T, Compare, Allocator>::rend() {
+		Node *tmp = _root;
+		while (tmp && tmp->_Left)
+			tmp = tmp->_Left;
+		if (tmp)
+			tmp = tmp->_Left;
+		return reverse_iterator(tmp, _root);
+	}
 
 	/* FIND --------------------------------------------------------------------------------------------------------------- */
 	template <class T, class Compare, class Allocator>
@@ -255,7 +273,7 @@ namespace ft {
 	}
 
 	template <class T, class Compare, class Allocator>
-	typename RedBlackTree<T, Compare, Allocator>::iterator RedBlackTree<T, Compare, Allocator>::insert(typename RedBlackTree<T, Compare, Allocator>::iterator hint, const value_type& _Val) {
+	typename RedBlackTree<T, Compare, Allocator>::iterator RedBlackTree<T, Compare, Allocator>::insert(typename RedBlackTree<T, Compare, Allocator>::iterator __unused hint, const value_type& _Val) {
 		ft::pair<Node *, bool> tmp = _Emplace(&_root, _Val);
 		return iterator(tmp.first);
 	}
@@ -331,92 +349,74 @@ namespace ft {
 
 	/* ERASE --------------------------------------------------------------------------------------------------------------- */
 	template <class T, class Compare, class Allocator>
-	void RedBlackTree<T, Compare, Allocator>::_erase_node(Node *node) {
-		Node *child, *parent;
-		int col;
-
-		printf("Here\n");
-		if (node->_Left && node->_Right) // 2 children
+	void RedBlackTree<T, Compare, Allocator>::rbTransplant(Node *u, Node *v) {
+		if (u == _root)
 		{
-			Node *replace = node->_Right;
-			while (replace->_Left)
-				replace = replace->_Left; // Looking for the node with the next keyvalue (it has no left child)
-			if (node->_Parent) // change parent's link on node
-			{
-				if (node->_Parent->_Left == node)
-					node->_Parent->_Left = replace;
-				if (node->_Parent->_Right == node)
-					node->_Parent->_Right = replace;
-			}
-			else
-				_root = replace; // case, when node is root itself
-			child = replace->_Right;
-			parent = replace->_Parent;
-			col = replace->_Color;
-			if (parent == node)
-				parent = replace;
-			else
-			{
-				if (child)
-					child->_Parent = parent;
-				parent->_Left = node->_Parent;
-				replace->_Right = node->_Right;
-				node->_Right->_Parent = replace;
-			}
-			replace->_Parent = node->_Parent;
-			replace->_Color = node->_Color;
-			replace->_Left = node->_Left;
-			node->_Left->_Parent = replace;
-			if (col == BLACK)
-			{
-				printf("before fix\n");
-				_fixErase(_root, child, parent);
-				printf("after fix\n");
-			}
-			_delete_node(node);
-			return ;
+			_root = v;
+			v->_Parent = NULL;
 		}
-		if (node->_Left)
-			child = node->_Left;
-		else
-			child = node->_Right;
-		parent = node->_Parent;
-		col = node->_Color;
-		if (child)
-			child->_Parent = parent;
-		if (parent)
-		{
-			if (node == parent->_Left)
-				parent->_Left = child;
+		else {
+			if (u == u->_Parent->_Left)
+				u->_Parent->_Left = v;
 			else
-				parent->_Right = child;
+				u->_Parent->_Right = v;
+			if (v)
+				v->_Parent = u->_Parent;
 		}
-		else
-			_root = child;
-		if (col == BLACK)
-		{
-			printf("before fix\n");
-			_fixErase(_root, child, parent);
-			printf("after fix\n");
-		}
-		_delete_node(node);
 	}
 
 	template <class T, class Compare, class Allocator>
-	void RedBlackTree<T, Compare, Allocator>::_fixErase(Node *&root, Node *node, Node *parent) {
+	void RedBlackTree<T, Compare, Allocator>::_erase_node(Node *node) {
+		bool original_color = node->_Color;
+		Node *to_delete = node;
+		Node *tmp;
+		if (node->_Left == NULL)
+		{
+			tmp = node->_Right;
+			rbTransplant(node, node->_Right);
+		}
+		else if (node->_Right == NULL)
+		{
+			tmp = node->_Left;
+			rbTransplant(node, node->_Left);
+		}
+		else {
+			Node *cp = node;
+			node = node->_Right;
+			while (node->_Left)
+				node = node->_Left;
+			original_color = node->_Color;
+			tmp = node->_Right;
+			if (node->_Parent != cp) {
+				rbTransplant(node, node->_Right);
+				node->_Right = cp->_Right;
+				cp->_Right->_Parent = node;
+			}
+			rbTransplant(cp, node);
+			node->_Left = cp->_Left;
+			node->_Left->_Parent = node;
+			node->_Color = cp->_Color;
+		}
+		_delete_node(to_delete);
+		if (original_color == BLACK)
+			_fixErase(tmp);
+	}
+
+	template <class T, class Compare, class Allocator>
+	void RedBlackTree<T, Compare, Allocator>::_fixErase( Node *node ) {
 		Node *brother;
 
 		while (node && node->_Color == BLACK && node != _root) // node is black and not-root
 		{
-			if (node && parent && parent->_Left == node)
+			if (node == node->_Parent->_Left)
 			{
-				brother = parent->_Right;
+				brother = node->_Parent->_Right;
 				if (brother->_Color == RED)
 				{
 					brother->_Color = BLACK;
-					parent->_Color = RED;
-					_Lrotate(parent);
-					brother = parent->_Right;
+					node->_Parent->_Color = RED;
+					_Lrotate(node->_Parent);
+					brother = node->_Parent->_Right;
 				}
 				if (brother && brother->_Left && brother->_Right &&
 					brother->_Left->_Color == BLACK && brother->_Right->_Color == BLACK)
@@ -432,28 +432,28 @@ namespace ft {
 						brother->_Color = RED;
 						_Rrotate(brother);
 					}
-					brother->_Color = parent->_Color;
-					parent->_Color = BLACK;
+					brother->_Color = brother->_Parent->_Color;
+					node->_Parent->_Color = BLACK;
 					brother->_Right->_Color = BLACK;
-					_Lrotate(parent);
-					node = root;
+					_Lrotate(node->_Parent);
+					node = _root;
 				}
 			}
 			else
 			{
-				brother = parent->_Left;
+				brother = node->_Parent->_Left;
 				if (brother && brother->_Color == RED)
 				{
 					brother->_Color = BLACK;
-					parent->_Color = RED;
-					_Rrotate(parent);
-					brother = parent->_Left;
+					node->_Parent->_Color = RED;
+					_Rrotate(node->_Parent);
+					brother = node->_Parent->_Left;
 				}
 				if (brother && brother->_Left && brother->_Right &&
 					brother->_Left->_Color == BLACK && brother->_Right->_Color == BLACK)
 				{
 					brother->_Color = RED;
-					node = parent;
+					node = node->_Parent;
 				}
 				else {
 					if (brother && brother->_Left && brother->_Left->_Color == BLACK)
@@ -461,13 +461,13 @@ namespace ft {
 						brother->_Right->_Color = BLACK;
 						brother->_Color = RED;
 						_Lrotate(brother);
-						brother = parent->_Left;
+						brother = brother->_Parent->_Left;
 					}
-					brother->_Color = parent->_Color;
-					parent->_Color = BLACK;
+					brother->_Color = node->_Parent->_Color;
+					node->_Parent->_Color = BLACK;
 					brother->_Left->_Color = BLACK;
-					_Rrotate(parent);
-					node = root;
+					_Rrotate(node->_Parent);
+					node = _root;
 				}
 			}			
 		}
@@ -484,12 +484,7 @@ namespace ft {
 	template <class T, class Compare, class Allocator>
 	void RedBlackTree<T, Compare, Allocator>::erase(iterator _First, iterator _Last) {
 		for (; _First != _Last;)
-		{
-			printf("in erase cycle before erase\n");
 			_erase_node((_First++).nodePtr);
-			printf("in erase cycle after erase\n");
-		}
-		printf("After cycle\n");
 	}
 	// size_type erase(const value_type& _Keyval);
 

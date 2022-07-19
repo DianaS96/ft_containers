@@ -39,13 +39,13 @@ namespace ft
 		typedef typename Allocator::pointer			pointer;
 		typedef typename Allocator::const_pointer	const_pointer;
 		typedef PairCompare<Key, T, Compare>		pair_compare;
-
-
 		typedef Node<value_type>					node;
 		typedef node*								node_ptr;
-		typedef ft::TreeIterator<ft::pair<const Key, T> >		iterator;
-		typedef ft::TreeConstIterator<ft::pair<const Key, T> >	const_iterator;
-		// reverse_iterator	std::reverse_iterator<iterator>
+
+		typedef ft::TreeIterator<ft::pair<const Key, T> >			iterator;
+		typedef ft::TreeConstIterator<ft::pair<const Key, T> >		const_iterator;
+		typedef ft::TreeReverseIterator<ft::pair<const Key, T> >	reverse_iterator;
+// reverse_iterator	std::reverse_iterator<iterator>
 		// const_reverse_iterator	std::reverse_iterator<const_iterator>
 		
 		/* MEMBER CLASSES -----------------------------------------------*/
@@ -78,7 +78,7 @@ namespace ft
 			_tree(comp, alloc) {}
 		template< class InputIt >
 		map( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _comp(comp), _tree(comp, alloc) {
-			_tree.insert(first, begin);
+			_tree.insert(first, last);
 		}
 		map( const map& other ) : _alloc(other._alloc), _comp(other._comp), _tree(other._tree) {}
 
@@ -118,9 +118,9 @@ namespace ft
 		const_iterator begin() const {return _tree.begin();}
 		iterator end() {return _tree.end();}
 		const_iterator end() const {return _tree.end();}
-		// reverse_iterator rbegin();
+		reverse_iterator rbegin() {return _tree.rbegin();}
 		// const_reverse_iterator rbegin() const;
-		// reverse_iterator rend();
+		reverse_iterator rend() {return _tree.rend();}
 		// const_reverse_iterator rend() const;
 
 		/* Capacity -----------------------------------------------*/
@@ -134,7 +134,7 @@ namespace ft
 		ft::pair<iterator, bool> insert( const value_type& value ) {
 			return _tree.insert(value);
 		}
-		iterator insert( iterator hint, const value_type& value ) {_tree.insert(hint, value);}
+		iterator insert( iterator __unused hint, const value_type& value ) {_tree.insert(hint, value);}
 		template< class InputIt >
 		void insert( InputIt first, InputIt last ) {_tree.insert(first, last);}
 

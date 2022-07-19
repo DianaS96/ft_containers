@@ -1,6 +1,31 @@
-#include <map>
+// #include <iostream>
+// namespace ft = std;
+// #include <map>
 #include "containers/map.hpp"
+// /*fonts color*/
+// # define FBLACK		"\033[0;30m"
+// # define FRED		"\033[0;31m"
+// # define FGREEN		"\033[0;32m"
+// # define FYELLOW	"\033[0;33m"
+// # define FBLUE		 "\033[0;34m"
+// # define FPURPLE	"\033[0;35m"
+// # define FCYAN		"\x1b[36m"
 
+// /*end color*/
+// # define NONE        "\033[0m"
+
+// #define WRONG_SIZE_CAP	"Wrong size or capacity!"
+// #define SIZE_CAP_OK		"Size and capacity are ok"
+
+// #define	SIZE_CAP_HEADER	"Size and capacity"
+
+// #define NO_RETURN_VALUE		0
+// #define OK_RETURN_VALUE		1
+// #define BAD_RETURN_VALUE	2
+
+// #define ZERO_TIME	"N/A - ft_time or std_time == 0"
+
+// # define	SIZE	10
 template< class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >
 void ft_print_map( ft::map<Key, T> & ft_map)
 {
@@ -11,9 +36,11 @@ void ft_print_map( ft::map<Key, T> & ft_map)
 }
 
 int main(void) {
-	ft::map<std::string, int>				ft_map;
-	ft::map<std::string, int>				ft_map_swap;
-	ft::map<std::string, int>::iterator		it1, it2, itlow, itup;
+	ft::map<std::string, int>						ft_map;
+	ft::map<std::string, int>						ft_map_swap;
+	ft::map<std::string, int>::iterator				it1, it2, itlow, itup;
+	ft::map<std::string, int>::reverse_iterator		rev_it1, rev_it2;
+
 	ft::map<std::string, int>::key_compare	mycomp = ft_map.key_comp();
 	std::string								str;
 	for (char c = 'A'; c < 'G'; ++c)
@@ -74,18 +101,27 @@ int main(void) {
 	it1 = ft_map.find("c");
 	ft_map.erase(it1);
 	ft_print_map(ft_map);
-	// std::cout << "Remove map[e] - map[g]" << std::endl;
-	// it1 = ft_map.find("e");
-	// printf("Found e\n");
-	// it2 = ft_map.find("g");
-	// printf("Found g\n");
-	// ft_map.erase(it1, it2);
-	// ft_print_map(ft_map);
+	std::cout << "Remove map[e] - map[g]" << std::endl;
+	it1 = ft_map.find("e");
+	printf("Found e\n");
+	it2 = ft_map.find("g");
+	printf("Found g\n");
+	ft_map.erase(it1, it2);
+	ft_print_map(ft_map);
 	std::cout << "Swap maps" << std::endl;
 	ft_map_swap.swap(ft_map);
 	ft_map["W"] = -1;
 	ft_map["G"] = 100;
 	ft_print_map(ft_map);
+	std::cout << "Reverse iterator" << std::endl;
+	rev_it1 = ft_map.rbegin();
+	// std::cout << rev_it1->first << " => " << rev_it1->second << "; "  << std::endl;;
+	*rev_it1++;
+	std::cout << rev_it1->first << " => " << rev_it1->second << "; "  << std::endl;;
+	*rev_it1++;
+	std::cout << rev_it1->first << " => " << rev_it1->second << "; "  << std::endl;;
+	(*--rev_it1);
+	std::cout << rev_it1->first << " => " << rev_it1->second << "; "  << std::endl;;
 
 	/* Observers  ---------------------------------------------------------------------- */	
 	std::cout << FPURPLE;
