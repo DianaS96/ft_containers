@@ -315,6 +315,99 @@ public:
 
 };
 
+template <class T>
+class TreeConstReverseIterator : public ft::iterator<std::bidirectional_iterator_tag, T, std::ptrdiff_t, const T*, const T&>
+{
+public:
+    typedef Node<T> Node;
+	Node *nodePtr;
+	Node *root;
+    
+    TreeConstReverseIterator (Node *p, Node *r) : nodePtr(p), root(r) {}
+	TreeConstReverseIterator() {};
+	TreeConstReverseIterator(const TreeConstReverseIterator& other) : nodePtr(other.nodePtr), root(other.root) {}
+	TreeConstReverseIterator(const ft::TreeReverseIterator<T>& other) : nodePtr(other.nodePtr), root(other.root) {}
+
+	TreeConstReverseIterator &operator=(const TreeConstReverseIterator& other) {
+		nodePtr = other.nodePtr;
+		root = other.root;
+		return (*this);
+	}
+
+	~TreeConstReverseIterator() {}
+
+	friend bool operator==(TreeConstReverseIterator lhs, TreeConstReverseIterator rhs) {return (lhs.nodePtr == rhs.nodePtr);}
+    
+    friend bool operator!=(TreeConstReverseIterator lhs, TreeConstReverseIterator rhs) {return (lhs.nodePtr != rhs.nodePtr);}
+    
+    const T& operator*() const {return nodePtr->_Myval;}
+    
+	const T* operator->() const {return &(nodePtr->_Myval);}
+
+    TreeConstReverseIterator& operator--() {
+		if (nodePtr == NULL)
+		{
+			if (root == NULL)
+				return (*this);
+			nodePtr = root;
+			while (nodePtr->_Left != NULL)
+				nodePtr = nodePtr->_Left;
+		}
+		else {
+			if (nodePtr->_Right != NULL)
+			{
+				nodePtr = nodePtr->_Right;
+				while (nodePtr->_Left != NULL)
+					nodePtr = nodePtr->_Left;
+			}
+			else {
+				while (nodePtr->_Parent && nodePtr == nodePtr->_Parent->_Right)
+					nodePtr = nodePtr->_Parent;
+				nodePtr = nodePtr->_Parent;
+			}
+		}
+		return (*this);
+	}
+    
+    TreeConstReverseIterator operator--(int) {
+		TreeConstReverseIterator clone(*this);
+		--(*this);
+		return (clone);
+	}
+    
+    TreeConstReverseIterator operator++() {
+		if (nodePtr == NULL)
+		{
+			if (root == NULL)
+				return (*this);
+			nodePtr = root;
+			while (nodePtr->_Right != NULL)
+				nodePtr = nodePtr->_Right;
+		}
+		else {
+			if (nodePtr->_Left != NULL)
+			{
+				nodePtr = nodePtr->_Left;
+				while (nodePtr->_Right != NULL)
+					nodePtr = nodePtr->_Right;
+			}
+			else {
+				while (nodePtr->_Parent && nodePtr == nodePtr->_Parent->_Left)
+					nodePtr = nodePtr->_Parent;
+				nodePtr = nodePtr->_Parent;
+			}
+		}
+		return (*this);
+	}
+    
+    TreeConstReverseIterator operator++(int) {
+		TreeConstReverseIterator clone(*this);
+		++(*this);
+		return (clone);
+	}
+
+};
+
 }
 
 #endif

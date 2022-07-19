@@ -42,11 +42,10 @@ namespace ft
 		typedef Node<value_type>					node;
 		typedef node*								node_ptr;
 
-		typedef ft::TreeIterator<ft::pair<const Key, T> >			iterator;
-		typedef ft::TreeConstIterator<ft::pair<const Key, T> >		const_iterator;
-		typedef ft::TreeReverseIterator<ft::pair<const Key, T> >	reverse_iterator;
-// reverse_iterator	std::reverse_iterator<iterator>
-		// const_reverse_iterator	std::reverse_iterator<const_iterator>
+		typedef ft::TreeIterator<ft::pair<const Key, T> >				iterator;
+		typedef ft::TreeConstIterator<ft::pair<const Key, T> >			const_iterator;
+		typedef ft::TreeReverseIterator<ft::pair<const Key, T> >		reverse_iterator;
+		typedef ft::TreeConstReverseIterator<ft::pair<const Key, T> >	const_reverse_iterator;
 		
 		/* MEMBER CLASSES -----------------------------------------------*/
 		class value_compare: std::binary_function<value_type, value_type, bool>
@@ -119,9 +118,9 @@ namespace ft
 		iterator end() {return _tree.end();}
 		const_iterator end() const {return _tree.end();}
 		reverse_iterator rbegin() {return _tree.rbegin();}
-		// const_reverse_iterator rbegin() const;
+		const_reverse_iterator rbegin() const {return _tree.rbegin();}
 		reverse_iterator rend() {return _tree.rend();}
-		// const_reverse_iterator rend() const;
+		const_reverse_iterator rend() const {return _tree.rend();}
 
 		/* Capacity -----------------------------------------------*/
 		bool empty() const {return _tree.empty();}

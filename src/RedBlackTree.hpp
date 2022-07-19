@@ -27,10 +27,10 @@ namespace ft {
 		typedef typename allocator_type::template rebind<Node>::other	node_allocator;
 		
 		/*-------------------- Iterators --------------------*/
-		typedef ft::TreeIterator<value_type>			iterator;
-		typedef ft::TreeConstIterator<value_type>		const_iterator;
-		typedef ft::TreeReverseIterator<value_type>		reverse_iterator;
-		// typedef TreeConstIterator<value_type>		const_reverse_iterator;
+		typedef ft::TreeIterator<value_type>				iterator;
+		typedef ft::TreeConstIterator<value_type>			const_iterator;
+		typedef ft::TreeReverseIterator<value_type>			reverse_iterator;
+		typedef ft::TreeConstReverseIterator<value_type>	const_reverse_iterator;
 	
 	private:
 		allocator_type	_alloc;
@@ -74,8 +74,8 @@ namespace ft {
 		const_iterator end() const;
 		reverse_iterator rbegin();
 		reverse_iterator rend();
-		// const_reverse_iterator rbegin() const;
-		// const_reverse_iterator rend() const;
+		const_reverse_iterator rbegin() const;
+		const_reverse_iterator rend() const;
 
 		size_type size() const {return _size;}
 		size_type max_size() const {return _node_alloc.max_size();}
@@ -193,6 +193,24 @@ namespace ft {
 		if (tmp)
 			tmp = tmp->_Left;
 		return reverse_iterator(tmp, _root);
+	}
+
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::const_reverse_iterator RedBlackTree<T, Compare, Allocator>::rbegin() const {
+		Node *tmp = _root;
+		while (tmp && tmp->_Right)
+			tmp = tmp->_Right;
+		return const_reverse_iterator(tmp, _root);
+	}
+
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::const_reverse_iterator RedBlackTree<T, Compare, Allocator>::rend() const {
+		Node *tmp = _root;
+		while (tmp && tmp->_Left)
+			tmp = tmp->_Left;
+		if (tmp)
+			tmp = tmp->_Left;
+		return const_reverse_iterator(tmp, _root);
 	}
 
 	/* FIND --------------------------------------------------------------------------------------------------------------- */

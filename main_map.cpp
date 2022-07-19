@@ -1,7 +1,7 @@
-#include <iostream>
-namespace ft = std;
-#include <map>
-// #include "containers/map.hpp"
+// #include <iostream>
+// namespace ft = std;
+// #include <map>
+#include "containers/map.hpp"
 #include "src/utils2.hpp"
 
 template< class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >
@@ -14,10 +14,11 @@ void ft_print_map( ft::map<Key, T> & ft_map)
 }
 
 int main(void) {
-	ft::map<std::string, int>						ft_map;
-	ft::map<std::string, int>						ft_map_swap;
-	ft::map<std::string, int>::iterator				it1, it2, itlow, itup;
-	ft::map<std::string, int>::reverse_iterator		rev_it1, rev_it2;
+	ft::map<std::string, int>							ft_map;
+	ft::map<std::string, int>							ft_map_swap;
+	ft::map<std::string, int>::iterator					it1, it2, itlow, itup;
+	ft::map<std::string, int>::reverse_iterator			rev_it1, rev_it2;
+	ft::map<std::string, int>::const_reverse_iterator	const_rev_it1, const_rev_it2;
 
 	ft::map<std::string, int>::key_compare	mycomp = ft_map.key_comp();
 	std::string								str;
@@ -173,6 +174,11 @@ int main(void) {
 	std::cout << "Printing tree using reverse iterator" << std::endl;
 	for (rev_it1 = ft_map.rbegin(); rev_it1 != rev_it2; rev_it1++)
 		std::cout << rev_it1->first << " => " << rev_it1->second << "; "  << std::endl;
+
+	const_rev_it2 = ft_map.rend();
+	std::cout << "Printing tree using const_reverse_iterator" << std::endl;
+	for (const_rev_it1 = ft_map.rbegin(); const_rev_it1 != const_rev_it2; const_rev_it1++)
+		std::cout << const_rev_it1->first << " => " << const_rev_it1->second << "; "  << std::endl;
 
 	return (0);
 }
