@@ -47,7 +47,7 @@ struct random_access_iterator_tag : public bidirectional_iterator_tag { };
 struct contiguous_iterator_tag: public random_access_iterator_tag { };
 
 /*------------------------------------ Iterator traits -----------------------------------*/
-
+#include <iterator>
 template< class Iter >
 struct iterator_traits {
 	typedef	typename Iter::difference_type		difference_type;
@@ -68,10 +68,10 @@ struct iterator_traits<T*> {
 
 template< class T >
 struct iterator_traits<const T*> {
-	typedef	std::ptrdiff_t				difference_type;
-	typedef const T						value_type;
-	typedef	const T*					pointer;
-	typedef const T&					reference;
+	typedef	std::ptrdiff_t					difference_type;
+	typedef const T							value_type;
+	typedef	const T*						pointer;
+	typedef const T&						reference;
 	typedef ft::random_access_iterator_tag	iterator_category;
 };
 
@@ -98,6 +98,13 @@ public:
 };
 
 /*------------------------- is_integral -------------------------*/
+/*
+Checks whether T is an integral type. 
+Provides the member constant value which is equal to true, if T is the type:
+bool, char, char8_t (since C++20), char16_t, char32_t, wchar_t, short, int, long, long long, 
+or any implementation-defined extended integer types, including any signed, unsigned, and cv-qualified variants.
+Otherwise, value is equal to false.
+*/
 // https://en.cppreference.com/w/cpp/types/numeric_limits/is_integer
 template< class T >	struct is_integral 						: public std::false_type {};
 template<>			struct is_integral<bool>				: public std::true_type {};
