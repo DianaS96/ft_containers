@@ -91,7 +91,10 @@ namespace ft {
 		void erase(iterator _First, iterator _Last);
 		size_type erase(const value_type& _Keyval);
 
-		void clear();
+		void clear() {
+			_clear_tree(_root);
+			_root = NULL;
+		}
 
 		iterator find(const value_type& _Keyval);
 		const_iterator find(const value_type& _Keyval) const;
