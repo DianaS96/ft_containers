@@ -179,7 +179,49 @@ namespace ft
 		*/
 		value_compare value_comp() const {return value_compare(key_comp());}
 	};
-		
+	
+	template< class Key, class T, class Compare, class Allocator >
+	bool operator==(const map<Key, T, Compare, Allocator>& __x,
+        			const map<Key, T, Compare, Allocator>& __y)
+	{
+		return (__x.size() == __y.size() && ft::equal(__x.begin(), __x.end(), __y.begin()));
+	}
+
+	template< class Key, class T, class Compare, class Allocator >
+	bool operator!=(const map<Key, T, Compare, Allocator>& __x,
+        			const map<Key, T, Compare, Allocator>& __y)
+	{
+		return !(__x == __y);
+	}
+
+	template< class Key, class T, class Compare, class Allocator >
+	bool operator<(const map<Key, T, Compare, Allocator>& __x,
+        			const map<Key, T, Compare, Allocator>& __y)
+	{
+		return ft::lexicographical_compare(__x.begin(), __x.end(), __y.begin(), __y.end());
+	}
+
+	template< class Key, class T, class Compare, class Allocator >
+	bool operator>(const map<Key, T, Compare, Allocator>& __x,
+        			const map<Key, T, Compare, Allocator>& __y)
+	{
+		return __y < __x;
+	}
+
+	template< class Key, class T, class Compare, class Allocator >
+	bool operator>=(const map<Key, T, Compare, Allocator>& __x,
+        			const map<Key, T, Compare, Allocator>& __y)
+	{
+		return !(__x < __y);
+	}
+
+	template< class Key, class T, class Compare, class Allocator >
+	bool operator<=(const map<Key, T, Compare, Allocator>& __x,
+        			const map<Key, T, Compare, Allocator>& __y)
+	{
+		return !(__y < __x);
+	}
+	
 } // namespace ft
 
 #endif
