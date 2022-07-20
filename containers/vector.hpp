@@ -443,31 +443,32 @@ typename vector<T, Allocator>::iterator vector<T, Allocator>::insert( iterator p
 	catch(...)
 	{
 		for (size_t j = 0; j < i; ++j)
-			_alloc.destroy(newarr + i);
+			_alloc.destroy(newarr + j);
 		_alloc.deallocate(newarr, _capacity);
 		throw;
 	}
 	// Fill tmp array with value given in function's parameters.
 	try {
-		_alloc.construct(newarr + i, value);
+		_alloc.construct(newarr + pos_idx, value);
 		i += 1;
 	}
 	catch(...)
 	{
 		for (size_t j = 0; j < i; ++j)
-			_alloc.destroy(newarr + i);
+			_alloc.destroy(newarr + j);
 		_alloc.deallocate(newarr, _capacity);
 		throw;
 	}
 	// Fill tmp array with values from _array (after pos).
 	try {
-		for (; pos_idx < _size; ++pos_idx, ++i)
-			_alloc.construct(newarr + i, _array[pos_idx]);
+		size_type	j = pos_idx + 1;
+		for (; i < _size; ++j, ++i)
+			_alloc.construct(newarr + j, _array[i]);
 	}
 	catch(...)
 	{
-		for (size_t j = 0; j < i; ++j)
-			_alloc.destroy(newarr + i);
+		for (size_t k = 0; k < i; ++k)
+			_alloc.destroy(newarr + k);
 		_alloc.deallocate(newarr, _capacity);
 		throw;
 	}
@@ -484,15 +485,21 @@ template <class T, class Allocator>
 void vector<T, Allocator>::insert( iterator pos, size_type count, const T& value ) {
 	size_type	pos_idx = 0;
 	size_type	i = 0;
+	size_type	tmp = 0;
 
 	for (iterator it = begin(); it != pos; ++it, ++pos_idx);
 	if (_capacity < _size + count)
-		reserve(_capacity * 2);
+	{
+		if (_capacity * 2 > _size + count)
+			reserve(_capacity * 2);
+		else
+			reserve(_size + count);
+	}
 	// Create tmp array and fill it with all elements from _array until pos.
 	T *newarr = _alloc.allocate(_capacity);
 	try {
-		for (i = 0; i < pos_idx; ++i)
-			_alloc.construct(newarr + i, _array[i]);
+		for (i = 0; i < pos_idx; ++i, ++tmp)
+			_alloc.construct(newarr + tmp, _array[i]);
 	}
 	catch(...)
 	{
@@ -503,8 +510,8 @@ void vector<T, Allocator>::insert( iterator pos, size_type count, const T& value
 	}
 	// Fill tmp array with (count times) value given in function's parameters.
 	try {
-		for (size_type j = 0; j < count; ++j, ++i)
-			_alloc.construct(newarr + i, value);
+		for (size_type j = 0; j < count; ++j, ++tmp)
+			_alloc.construct(newarr + tmp, value);
 	}
 	catch(...)
 	{
@@ -515,8 +522,8 @@ void vector<T, Allocator>::insert( iterator pos, size_type count, const T& value
 	}
 	// Fill tmp array with values from _array (after pos).
 	try {
-		for (; pos_idx < _size; ++pos_idx, ++i)
-			_alloc.construct(newarr + i, _array[pos_idx]);
+		for (; i < _size; ++pos_idx, ++i)
+			_alloc.construct(newarr + pos_idx, _array[i]);
 	}
 	catch(...)
 	{
