@@ -251,11 +251,7 @@ void vector<T, Allocator>::assign( size_type count, const T& value ) {
 	for (i = 0; i < _size; i++)
 		_alloc.destroy(_array + i);
 	if (_capacity < count)
-	{
-		_alloc.deallocate(_array, _capacity);
-		_capacity = count;
-		_array = _alloc.allocate(_capacity);
-	}
+		reserve(count);
 	_size = count;
 	for (i = 0; i < _size; ++i)
 	{
@@ -281,11 +277,7 @@ void vector<T, Allocator>::assign( typename ft::enable_if<ft::is_iterator<InputI
 	for (i = 0; i < _size; ++i)
 		_alloc.destroy(_array + i);
 	if (_capacity < count)
-	{
-		_alloc.deallocate(_array, _capacity);
-		_capacity = count;
-		_array = _alloc.allocate(_capacity);
-	}
+		reserve(count);
 	_size = count;
 	for (i = 0; i < _size && first != last; ++i, ++first)
 	{
@@ -551,9 +543,14 @@ typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, In
 	T			*tmp;
 
 	for (InputIt it = first; it != last; ++it, ++count);
-	for (InputIt it = begin(); it != pos; ++it, ++pos_idx);
+	for (iterator it = begin(); it != pos; ++it, ++pos_idx);
 	if (_capacity < _size + count)
-		new_cap = _capacity * 2;
+	{
+		if (_capacity * 2 > _size + count)
+			new_cap = _capacity * 2;
+		else
+			new_cap = _size + count;
+	}
 	else
 		new_cap = _capacity;
 	// Create tmp array and fill it with all elements from _array until pos.
