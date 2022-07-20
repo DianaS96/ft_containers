@@ -71,12 +71,12 @@ namespace ft
 			_alloc(allocator_type()), 
 			_comp(key_compare()), 
 			_tree() {}
-		explicit map( const Compare& comp, const Allocator& alloc = Allocator() ) : 
+		map( const Compare& comp, const Allocator& alloc = Allocator() ) : 
 			_alloc(alloc), 
 			_comp(comp),
 			_tree(comp, alloc) {}
 		template< class InputIt >
-		map( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _comp(comp), _tree(comp, alloc) {
+		map( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _comp(comp) {
 			_tree.insert(first, last);
 		}
 		map( const map& other ) : _alloc(other._alloc), _comp(other._comp), _tree(other._tree) {}

@@ -46,7 +46,7 @@ namespace ft {
 		_compare(compare()), 
 		_root(NULL), 
 		_size(0) {}
-		explicit RedBlackTree(const compare & comp, const allocator_type & alloc = allocator_type()) : 
+		RedBlackTree(const compare & comp, const allocator_type & alloc = allocator_type()) : 
 		_alloc(alloc), 
 		_node_alloc(node_allocator()), 
 		_compare(comp), 
@@ -293,13 +293,13 @@ namespace ft {
 	template <class T, class Compare, class Allocator>
 	typename RedBlackTree<T, Compare, Allocator>::iterator RedBlackTree<T, Compare, Allocator>::insert(typename RedBlackTree<T, Compare, Allocator>::iterator __unused hint, const value_type& _Val) {
 		ft::pair<Node *, bool> tmp = _Emplace(&_root, _Val);
-		return iterator(tmp.first);
+		return iterator(tmp.first, _root);
 	}
 
 	template <class T, class Compare, class Allocator>
 	template <class _Iter>
 	void RedBlackTree<T, Compare, Allocator>::insert(_Iter _First, _Iter _Last) {
-		for (; _First < _Last; ++_First)
+		for (; _First != _Last; ++_First)
 			insert(*_First);
 	}
 
