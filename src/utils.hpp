@@ -17,6 +17,7 @@
 # include <sys/time.h>
 # include <string>
 # include <limits>
+# include <type_traits>
 # include "node.hpp"
 
 namespace ft {
@@ -58,10 +59,10 @@ struct iterator_traits {
 
 template< class T >
 struct iterator_traits<T*> {
-	typedef	std::ptrdiff_t				difference_type;
-	typedef T							value_type;
-	typedef	T*							pointer;
-	typedef T&							reference;
+	typedef	std::ptrdiff_t					difference_type;
+	typedef T								value_type;
+	typedef	T*								pointer;
+	typedef T&								reference;
 	typedef ft::random_access_iterator_tag	iterator_category;
 };
 
@@ -95,6 +96,28 @@ private:
 public:	
 	static const bool value = sizeof(f<T>(1)) != sizeof(double);
 };
+
+/*------------------------- is_integral -------------------------*/
+// https://en.cppreference.com/w/cpp/types/numeric_limits/is_integer
+template< class T >	struct is_integral 						: public std::false_type {};
+template<>			struct is_integral<bool>				: public std::true_type {};
+template<>			struct is_integral<char>				: public std::true_type {};
+template<>			struct is_integral<signed char>			: public std::true_type {};
+template<>			struct is_integral<unsigned char>		: public std::true_type {};
+template<>			struct is_integral<wchar_t>				: public std::true_type {};
+template<>			struct is_integral<char16_t>			: public std::true_type {};
+template<>			struct is_integral<char32_t>			: public std::true_type {};
+template<>			struct is_integral<short>				: public std::true_type {};
+template<>			struct is_integral<unsigned short>		: public std::true_type {};
+template<>			struct is_integral<int>					: public std::true_type {};
+template<>			struct is_integral<unsigned int>		: public std::true_type {};
+template<>			struct is_integral<long>				: public std::true_type {};
+template<>			struct is_integral<unsigned long>		: public std::true_type {};
+template<>			struct is_integral<long long>			: public std::true_type {};
+template<>			struct is_integral<unsigned long long>	: public std::true_type {};
+template<>			struct is_integral<float>				: public std::false_type {};
+template<>			struct is_integral<double>				: public std::false_type {};
+template<>			struct is_integral<long double>			: public std::false_type {};
 
 /*------------------------- equal -------------------------*/
 /*
