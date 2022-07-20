@@ -205,7 +205,7 @@ namespace ft
 	bool operator>(const map<Key, T, Compare, Allocator>& __x,
         			const map<Key, T, Compare, Allocator>& __y)
 	{
-		return __y < __x;
+		return !(__x < __y || __x == __y);
 	}
 
 	template< class Key, class T, class Compare, class Allocator >
@@ -219,7 +219,7 @@ namespace ft
 	bool operator<=(const map<Key, T, Compare, Allocator>& __x,
         			const map<Key, T, Compare, Allocator>& __y)
 	{
-		return !(__y < __x);
+		return (__x < __y || __x == __y);
 	}
 	
 } // namespace ft
