@@ -507,7 +507,16 @@ namespace ft {
 		for (; _First != _Last;)
 			_erase_node((_First++).nodePtr);
 	}
-	// size_type erase(const value_type& _Keyval);
+
+	template <class T, class Compare, class Allocator>
+	typename RedBlackTree<T, Compare, Allocator>::size_type RedBlackTree<T, Compare, Allocator>::erase(const value_type& _Keyval) {
+		Node *found = _find_node(_Keyval);
+
+		if (!found)
+			return 0;
+		_erase_node(found);
+		return 1;
+	}
 
 
 	/* LOWER AND UPPER BOUND, EQUAL RANGE --------------------------------------------------------------------------------------------------------------- */
