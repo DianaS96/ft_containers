@@ -294,7 +294,7 @@ namespace ft {
 	}
 
 	template <class T, class Compare, class Allocator>
-	typename RedBlackTree<T, Compare, Allocator>::iterator RedBlackTree<T, Compare, Allocator>::insert(typename RedBlackTree<T, Compare, Allocator>::iterator __unused hint, const value_type& _Val) {
+	typename RedBlackTree<T, Compare, Allocator>::iterator RedBlackTree<T, Compare, Allocator>::insert(typename RedBlackTree<T, Compare, Allocator>::iterator hint, const value_type& _Val) {
 		ft::pair<Node *, bool> tmp = _Emplace(&_root, _Val);
 		return iterator(tmp.first, _root);
 	}
