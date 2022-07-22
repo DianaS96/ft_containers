@@ -384,7 +384,9 @@ namespace ft {
 			else
 				u->_Parent->_Right = v;
 			if (v)
+			{
 				v->_Parent = u->_Parent;
+			}
 		}
 	}
 
@@ -434,7 +436,7 @@ namespace ft {
 			if (node == node->_Parent->_Left)
 			{
 				brother = node->_Parent->_Right;
-				if (brother->_Color == RED)
+				if (brother && brother->_Color == RED)
 				{
 					brother->_Color = BLACK;
 					node->_Parent->_Color = RED;
@@ -451,9 +453,11 @@ namespace ft {
 				{
 					if (brother && brother->_Right && brother->_Right->_Color == BLACK)
 					{
-						brother->_Left->_Color = BLACK;
+						if (brother->_Left)
+							brother->_Left->_Color = BLACK;
 						brother->_Color = RED;
-						_Rrotate(brother);
+						if (brother->_Left)
+							_Rrotate(brother);
 					}
 					brother->_Color = brother->_Parent->_Color;
 					node->_Parent->_Color = BLACK;
@@ -481,9 +485,11 @@ namespace ft {
 				else {
 					if (brother && brother->_Left && brother->_Left->_Color == BLACK)
 					{
-						brother->_Right->_Color = BLACK;
+						if (brother->_Right)
+							brother->_Right->_Color = BLACK;
 						brother->_Color = RED;
-						_Lrotate(brother);
+						if (brother->_Right)
+							_Lrotate(brother);
 						brother = brother->_Parent->_Left;
 					}
 					brother->_Color = node->_Parent->_Color;

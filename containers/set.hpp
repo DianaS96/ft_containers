@@ -40,10 +40,10 @@ namespace ft {
 		set( const set& other ) : _comp(other._comp), _alloc(other._alloc), _tree(other._tree) {}
 		template< class InputIt >
 		set( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator() ) : _comp(comp), _alloc(alloc) {
-			_tree(first, last);
+			_tree.insert(first, last);
 		}
 
-		~set();
+		~set() {_tree.clear();}
 
 		set& operator=( const set& other ) {
 			_tree = other._tree;
@@ -83,7 +83,7 @@ namespace ft {
 
 		/*-------------------- Lookup --------------------*/
 		size_type count( const Key& key ) const {
-			if (_tree.find(key))
+			if (find(key) != end())
 				return 1;
 			return 0;
 		}
