@@ -309,8 +309,10 @@ namespace ft {
 	// https://neerc.ifmo.ru/wiki/index.php?title=%D0%9A%D1%80%D0%B0%D1%81%D0%BD%D0%BE-%D1%87%D0%B5%D1%80%D0%BD%D0%BE%D0%B5_%D0%B4%D0%B5%D1%80%D0%B5%D0%B2%D0%BE
 	template <class T, class Compare, class Allocator>
 	ft::pair<typename RedBlackTree<T, Compare, Allocator>::Node *, bool> RedBlackTree<T, Compare, Allocator>::_Emplace(Node **tree, const value_type & key) {
-		Node	*parent = *tree == NULL ? NULL : (*tree)->_Parent;
+		Node	*parent = NULL;
 
+		if (*tree != NULL)
+			parent = (*tree)->_Parent;
 		while (*tree != NULL) // move down till we met the greatest myval < key
 		{
 			parent = *tree;

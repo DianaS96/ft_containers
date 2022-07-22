@@ -81,7 +81,7 @@ namespace ft
 		}
 		map( const map& other ) : _alloc(other._alloc), _comp(other._comp), _tree(other._tree) {}
 
-		~map() {}
+		~map() {_tree.clear();}
 
 		map& operator=( const map& other ) {
 			if (this != &other) {
@@ -124,6 +124,7 @@ namespace ft
 
 		/* Capacity -----------------------------------------------*/
 		bool empty() const {return _tree.empty();}
+		
 		size_type size() const {return _tree.size();}
 		size_type max_size() const {return _tree.max_size();}
 
