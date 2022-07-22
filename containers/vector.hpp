@@ -475,20 +475,23 @@ typename vector<T, Allocator>::iterator vector<T, Allocator>::insert( iterator p
 
 template <class T, class Allocator>
 void vector<T, Allocator>::insert( iterator pos, size_type count, const T& value ) {
-	size_type	pos_idx = 0;
+	size_type	pos_idx = pos - begin();
 	size_type	i = 0;
 	size_type	tmp = 0;
+	size_type	new_cap;
 
-	for (iterator it = begin(); it != pos; ++it, ++pos_idx);
+	if (_size == 0)
+		return ;
+	new_cap = _capacity;
 	if (_capacity < _size + count)
 	{
 		if (_capacity * 2 > _size + count)
-			reserve(_capacity * 2);
+			new_cap = _capacity * 2;
 		else
-			reserve(_size + count);
+			new_cap = _size + count;
 	}
 	// Create tmp array and fill it with all elements from _array until pos.
-	T *newarr = _alloc.allocate(_capacity);
+	T *newarr = _alloc.allocate(new_cap);
 	try {
 		for (i = 0; i < pos_idx; ++i, ++tmp)
 			_alloc.construct(newarr + tmp, _array[i]);
@@ -496,8 +499,8 @@ void vector<T, Allocator>::insert( iterator pos, size_type count, const T& value
 	catch(...)
 	{
 		for (size_t j = 0; j < i; ++j)
-			_alloc.destroy(newarr + i);
-		_alloc.deallocate(newarr, _capacity);
+			_alloc.destroy(newarr + j);
+		_alloc.deallocate(newarr, new_cap);
 		throw;
 	}
 	// Fill tmp array with (count times) value given in function's parameters.
@@ -508,20 +511,20 @@ void vector<T, Allocator>::insert( iterator pos, size_type count, const T& value
 	catch(...)
 	{
 		for (size_t j = 0; j < i; ++j)
-			_alloc.destroy(newarr + i);
-		_alloc.deallocate(newarr, _capacity);
+			_alloc.destroy(newarr + j);
+		_alloc.deallocate(newarr, new_cap);
 		throw;
 	}
 	// Fill tmp array with values from _array (after pos).
 	try {
-		for (; i < _size; ++pos_idx, ++i)
-			_alloc.construct(newarr + pos_idx, _array[i]);
+		for (; i < _size; ++tmp, ++i)
+			_alloc.construct(newarr + tmp, _array[i]);
 	}
 	catch(...)
 	{
 		for (size_t j = 0; j < i; ++j)
-			_alloc.destroy(newarr + i);
-		_alloc.deallocate(newarr, _capacity);
+			_alloc.destroy(newarr + j);
+		_alloc.deallocate(newarr, new_cap);
 		throw;
 	}
 	// Destroy _array and then make _array equal newarr.
@@ -530,6 +533,7 @@ void vector<T, Allocator>::insert( iterator pos, size_type count, const T& value
 	_alloc.deallocate(_array, _capacity);
 	_array = newarr;
 	_size += count;
+	_capacity = new_cap;
 }
 
 template <class T, class Allocator>
@@ -562,7 +566,7 @@ typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, In
 	catch(...)
 	{
 		for (size_type j = 0; j < i; ++j)
-			_alloc.destroy(tmp + i);
+			_alloc.destroy(tmp + j);
 		_alloc.deallocate(tmp, new_cap);
 		throw;
 	}
@@ -574,7 +578,7 @@ typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, In
 		catch(...)
 	{
 		for (size_t j = 0; j < i; ++j)
-			_alloc.destroy(tmp + i);
+			_alloc.destroy(tmp + j);
 		_alloc.deallocate(tmp, new_cap);
 		throw;
 	}
@@ -585,8 +589,9 @@ typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, In
 	}
 	catch(...)
 	{
+		printf("Catch3\n");
 		for (size_t j = 0; j < i; ++j)
-			_alloc.destroy(tmp + i);
+			_alloc.destroy(tmp + j);
 		_alloc.deallocate(tmp, new_cap);
 		throw;
 	}
