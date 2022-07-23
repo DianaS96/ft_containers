@@ -1,7 +1,7 @@
-// #include <iostream>
-// namespace ft = std;
-// #include <map>
-#include "containers/map.hpp"
+#include <iostream>
+namespace ft = std;
+#include <map>
+// #include "containers/map.hpp"
 #include "src/utils2.hpp"
 
 template< class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >
@@ -60,10 +60,12 @@ int main(void) {
 	std::cout << "Access invalid key with at" << std::endl;
 	try
 	{
+		printf("Here\n");
 		ft_map.at("lol") = 20;
 	}
 	catch(const std::exception& e)
 	{
+		printf("Here\n");
 		std::cerr << FRED << e.what() << NONE << '\n';
 	}
 	std::cout << "Change map value using at" << std::endl;

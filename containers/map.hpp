@@ -97,8 +97,13 @@ namespace ft
 		/* Element access -----------------------------------------------*/
 		mapped_type& at( const key_type& key ) {
 			iterator it = find(key);
+			printf("iter\n");
 			if (it == end())
+			{
+				printf("iter\n");
 				throw std::out_of_range("invalid map<K, T> key");
+			}
+			printf("iter\n");
 			return it->second;
 		}
 		const mapped_type& at( const key_type& key ) const {
