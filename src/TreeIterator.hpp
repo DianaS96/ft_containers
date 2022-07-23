@@ -62,7 +62,6 @@ public:
 				nodePtr = nodePtr->_Right;
 				while (nodePtr->_Left)
 				{
-					// printf("smwhere\n");
 					nodePtr = nodePtr->_Left;
 				}
 			}
