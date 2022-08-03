@@ -26,4 +26,8 @@
 
 # define	SIZE	10
 
+# include <sys/time.h>
+# include <ctime>
+
+
 #endif

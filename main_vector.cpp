@@ -49,11 +49,16 @@ void	ft_print_head()
 }
 
 template<typename T>
-int	ft_check_values(ft::vector<T> ft_vec, std::vector<T> std_vec)
+int	ft_check_values(ft::vector<T> &ft_vec, std::vector<T> &std_vec)
 {
 	for (size_t i = 0; i < ft_vec.size(); ++i)
+	{
 		if (ft_vec[i] != std_vec[i])
+		{
+			std::cout << i << " ft: " << ft_vec[i] << " std: " << std_vec[i] << std::endl;
 			return 1;
+		}
+	}
 	return 0;
 }
 
@@ -83,7 +88,10 @@ void	ft_print_stats(ft::vector<T> &ft_vec, std::vector<T> &std_vec, get_data dat
     std::cout << std::setw(20) << std::fixed << data.ft_time << " ms" << "|";
     std::cout << std::setw(21) << data.std_time << " ms" << "|";
     std::cout << std::setw(10) << data.time_dif << " ms" << "|";
-    std::cout << std::setw(10) << color << data.time_dif_perc << " %" << NONE << std::endl;
+	if (data.std_time == 0.0)
+	    std::cout << std::setw(10) << FPURPLE << "Division by 0" << NONE << std::endl;
+	else
+	    std::cout << std::setw(10) << color << data.time_dif_perc << " %" << NONE << std::endl;
 	
 	
 }
@@ -391,8 +399,8 @@ ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
 	typename ft::vector<T1>::iterator	ft_it = ft_vec.begin();
 	typename std::vector<T1>::iterator	std_it = std_vec.begin();
 
-	ft_it++;
-	std_it++;
+	// ft_it++;
+	// std_it++;
 	Timer::Start();
 	ft_vec.insert(ft_it, val);
 	Timer::Stop();
@@ -401,8 +409,6 @@ ft::vector<T1> &ft_vec, std::vector<T1> &std_vec)
 	std_vec.insert(std_it, val);
 	Timer::Stop();
 	ms_double_std = Timer::getRes();
-	std::cout << "ft: " << ft_vec.size() << " and " << ft_vec.capacity() << std::endl;
-	std::cout << "std: " << std_vec.size() << " and " << std_vec.capacity() << std::endl;
 	ft_fill_data("insert", ms_double_ft, ms_double_std, data);
 	ft_print_stats(ft_vec, std_vec, data, res);
 }
@@ -760,14 +766,70 @@ int main(void) {
 
 	/*------------------------ swap ------------------------*/
 	ft_swap_test(ms_double_ft, ms_double_std, data, ft_vec, std_vec, tmp_ft, tmp_std);
-	// for (size_t i = 0; i < ft_vec.size(); ++i)
-	// 	std::cout << ft_vec[i] << std::endl;
 
 	std::cout << "ft_total_time: " << data.ft_total_time << " std_total_time: " << data.std_total_time << std::endl;
 	std::cout << "Diff, ms: " << data.ft_total_time - data.std_total_time << std::endl;
 	std::cout << "Diff, %: " << (data.ft_total_time - data.std_total_time) / data.std_total_time << std::endl;
 
-	ft_vec.push_back(*(ft_vec.end() - 2));
-	ft_vec.push_back(*(ft_vec.rbegin() + 1));
+	/*------------------------ iterators comparison ------------------------*/
+	std::cout << FBLUE << "Iterators comparison check" << NONE << std::endl;
+	ft::vector<int>::const_iterator it_const = ft_vec.begin();;
+    ft::vector<int>::iterator it = ft_vec.begin();
+
+	std::vector<int>::const_iterator it_const_std = std_vec.begin();;
+    std::vector<int>::iterator it_std = std_vec.begin();
+
+	std::cout << FPURPLE << "Check operator==" << NONE << std::endl;
+	if (it == it_const && it_std == it_const_std)
+		std::cout << FGREEN << "operator== works correctly" << NONE << std::endl;
+	else
+		std::cout << FRED << "operator== does not work" << NONE << std::endl;
+	
+	std::cout << FPURPLE << "Check operator<=" << NONE << std::endl;
+	it++;
+	it_std++;
+	if ((it <= it_const) == (it_std <= it_const_std))
+		std::cout << FGREEN << "operator<= works correctly" << NONE << std::endl;
+	else
+		std::cout << FRED << "operator<= does not work" << NONE << std::endl;
+
+	std::cout << FPURPLE << "Check operator>=" << NONE << std::endl;
+	it_const += 2;
+	it_const_std += 2;
+	if ((it >= it_const) == (it_std >= it_const_std))
+		std::cout << FGREEN << "operator>= works correctly" << NONE << std::endl;
+	else
+		std::cout << FRED << "operator>= does not work" << NONE << std::endl;
+
+	std::cout << FPURPLE << "Check operator!=" << NONE << std::endl;
+
+	if ((it != it_const) == (it_std != it_const_std))
+		std::cout << FGREEN << "operator!= works correctly" << NONE << std::endl;
+	else
+		std::cout << FRED << "operator!= does not work" << NONE << std::endl;
+
+	std::cout << FBLUE << "Reverse iterators comparison check" << NONE << std::endl;
+	ft::vector<int>::const_reverse_iterator it_const_end = ft_vec.rend();
+    ft::vector<int>::reverse_iterator it_end = ft_vec.rend();
+	
+	std::vector<int>::const_reverse_iterator std_it_const_end = std_vec.rend();
+    std::vector<int>::reverse_iterator std_it_end = std_vec.rend();
+
+	std::cout << FPURPLE << "Check operator==" << NONE << std::endl;
+	it_const_end--;
+	it_end--;
+	std_it_const_end--;
+	std_it_end--;
+	if ((std_it_end == std_it_const_end) == (it_const_end == it_end))
+		std::cout << FGREEN << "(Reverse it) operator== works correctly" << NONE << std::endl;
+	else
+		std::cout << FRED << "(Reverse it) operator== does not work" << NONE << std::endl;
+
+	std::cout << FPURPLE << "Check operator<" << NONE << std::endl;
+	if ((std_it_end < std_it_const_end) == (it_const_end < it_end))
+		std::cout << FGREEN << "(Reverse it) operator< works correctly" << NONE << std::endl;
+	else
+		std::cout << FRED << "(Reverse it) operator< does not work" << NONE << std::endl;
+
 	return (0);
 }

@@ -47,7 +47,6 @@ struct random_access_iterator_tag : public bidirectional_iterator_tag { };
 struct contiguous_iterator_tag: public random_access_iterator_tag { };
 
 /*------------------------------------ Iterator traits -----------------------------------*/
-#include <iterator>
 template< class Iter >
 struct iterator_traits {
 	typedef	typename Iter::difference_type		difference_type;
@@ -82,21 +81,6 @@ struct enable_if {};
 template<class T>
 struct enable_if<true, T> { typedef T type; };
 
-/*------------------------- is_iterator -------------------------*/
-template<class T>
-struct is_iterator {
-private:
-	template<class C>
-	static typename C::iterator_category f(int a) {
-		(void)a;
-		return C::iterator_category();
-	}
-	template <class C>
-	static double f(...) {return 0;};
-public:	
-	static const bool value = sizeof(f<T>(1)) != sizeof(double);
-};
-
 /*------------------------- is_integral -------------------------*/
 /*
 Checks whether T is an integral type. 
@@ -126,7 +110,7 @@ template<>			struct is_integral<float>				: public std::false_type {};
 template<>			struct is_integral<double>				: public std::false_type {};
 template<>			struct is_integral<long double>			: public std::false_type {};
 
-/*------------------------- equal -------------------------*/
+/*------------------------------- equal ----------------------------*/
 /*
 Returns true if the range [first1, last1) is equal 
 to the range [first2, first2 + (last1 - first1)), and false otherwise
@@ -141,6 +125,7 @@ bool equal( InputIt1 first1, InputIt1 last1, InputIt2 first2 ) {
     return true;
 }
 
+/*------------------------------- pair class ----------------------------*/
 /* Pair is a class template that provides a way to store 
 ** two heterogeneous objects as a single unit */
 template<class T1, class T2> 
@@ -169,6 +154,8 @@ struct pair
     //     return (*this);
     // }
 };
+
+/*---------------------------- non-member functions for pair class ----------------------------*/
 #include <utility>
 /* Creates a pair object, deducing the target type from the types of arguments. */
 template< class T1, class T2 >
@@ -194,6 +181,7 @@ bool operator>( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs ) {return
 template< class T1, class T2 >
 bool operator>=( const ft::pair<T1,T2>& lhs, const ft::pair<T1,T2>& rhs ) {return !(lhs < rhs);}
 
+/*---------------------------- lexicographical_compare ----------------------------*/
 // https://en.cppreference.com/w/cpp/algorithm/lexicographical_compare
 template<class InputIt1, class InputIt2>
 bool lexicographical_compare(InputIt1 first1, InputIt1 last1,
@@ -216,6 +204,15 @@ bool lexicographical_compare(InputIt1 first1, InputIt1 last1,
         if (comp(*first2, *first1)) return false;
     }
     return (first1 == last1) && (first2 != last2);
+}
+
+/*---------------------------- swap ----------------------------*/
+template <typename T>
+void swap(T &a, T &b)
+{
+    T tmp = a;
+    a = b;
+    b = tmp;
 }
 
 }

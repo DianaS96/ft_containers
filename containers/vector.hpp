@@ -28,8 +28,8 @@ template <
 		typedef typename allocator_type::pointer		pointer;
 		typedef typename allocator_type::const_pointer	const_pointer;
 
-		typedef ft::random_access_iterator<T>			iterator;
-		typedef ft::random_access_iterator<const T>		const_iterator;
+		typedef ft::random_access_iterator<pointer>				iterator;
+		typedef ft::random_access_iterator<const_pointer>		const_iterator;
 		typedef ft::rev_random_access_iterator<iterator>		reverse_iterator;
 		typedef ft::rev_random_access_iterator<const_iterator>	const_reverse_iterator;
 
@@ -44,8 +44,32 @@ template <
 					const Allocator& alloc = Allocator());
 		/* Constructs the container with the contents of the range [first, last). */
 		template < class InputIt >
-		vector( typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, 
-				InputIt last, const Allocator& alloc = Allocator() );
+		vector( InputIt first, 
+				InputIt last, const Allocator& alloc = Allocator(), typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = 0 ) :
+				_capacity(0), _size(0), _alloc(alloc), _array(NULL) {
+			size_type	i;
+			InputIt		tmp(first);
+
+			_size = 0;
+			while (*tmp != *last)
+			{
+				tmp++;
+				_size++;
+			}
+			_capacity = _size;
+			_array = _alloc.allocate(_capacity);
+			try {
+				for (i = 0; *first != *last; ++i, first++)
+					_alloc.construct(_array + i, *first);
+			}
+			catch(...)
+			{
+				for (size_type j = 0; j < i; ++j)
+					_alloc.destroy(_array + j);
+				_alloc.deallocate(_array, _capacity);
+				throw;
+			}
+		}
 		/* Copy constructor. Constructs the container with the copy of the contents of other. */
 		vector( const vector& other );
 
@@ -57,7 +81,29 @@ template <
 		void assign( size_type count, const T& value );
 		/* Replaces the contents with copies of those in the range [first, last). */
 		template < class InputIt >
-		void assign( typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, InputIt last );
+		void assign( InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = 0 ) {
+			size_type	count = last - first;
+			size_type	i = 0;
+
+			for (i = 0; i < _size; ++i)
+				_alloc.destroy(_array + i);
+			if (_capacity < count)
+				reserve(count);
+			_size = count;
+			for (i = 0; i < _size && first != last; ++i, ++first)
+			{
+				try
+				{
+					_alloc.construct(_array + i, *first);
+				}
+				catch(...)
+				{
+					for (size_type j = 0; j < i; ++j)
+						_alloc.destroy(_array + j);
+					throw;
+				}
+			}
+		}
 
 		/* Returns the allocator associated with the container. */
 		allocator_type get_allocator() const;
@@ -110,7 +156,70 @@ template <
 		iterator insert( iterator pos, const T& value );
 		void insert( iterator pos, size_type count, const T& value );
 		template < class InputIt >
-		void insert( iterator pos, typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, InputIt last );
+		void insert( iterator pos, InputIt first, InputIt last, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type* = 0 ) {
+			size_type	count = 0;
+			size_type	pos_idx = 0;
+			size_type	new_cap = 0;
+			size_type	i;
+			T			*tmp;
+
+			for (InputIt it = first; it != last; ++it, ++count);
+			for (iterator it = begin(); it != pos; ++it, ++pos_idx);
+			if (_capacity < _size + count)
+			{
+				if (_capacity * 2 > _size + count)
+					new_cap = _capacity * 2;
+				else
+					new_cap = _size + count;
+			}
+			else
+				new_cap = _capacity;
+			// Create tmp array and fill it with all elements from _array until pos.
+			tmp = _alloc.allocate(new_cap);
+			try {
+				for (i = 0; i < pos_idx; ++i)
+					_alloc.construct(tmp + i, _array[i]);
+			}
+			catch(...)
+			{
+				for (size_type j = 0; j < i; ++j)
+					_alloc.destroy(tmp + j);
+				_alloc.deallocate(tmp, new_cap);
+				throw;
+			}
+			// Fill tmp array with values from the given range.
+			try {
+				for (; first < last; ++first, ++i)
+					_alloc.construct(tmp + i, *first);
+			}
+				catch(...)
+			{
+				for (size_t j = 0; j < i; ++j)
+					_alloc.destroy(tmp + j);
+				_alloc.deallocate(tmp, new_cap);
+				throw;
+			}
+			// Fill tmp array with values from _array (after pos).
+			try {
+				for (; pos_idx < _size; ++pos_idx, ++i)
+					_alloc.construct(tmp + i, _array[pos_idx]);
+			}
+			catch(...)
+			{
+				for (size_t j = 0; j < i; ++j)
+					_alloc.destroy(tmp + j);
+				_alloc.deallocate(tmp, new_cap);
+				throw;
+			}
+			// Destroy _array and then make _array equal newarr.
+			for (i = 0; i < _size; ++i)
+				_alloc.destroy(_array + i);
+			_alloc.deallocate(_array, _capacity);
+			_array = tmp;
+			_capacity = new_cap;
+			_size += count;
+		}
+
 		/* Erases the specified elements from the container. */
 		iterator erase( iterator pos );
 		iterator erase( iterator first, iterator last );
@@ -128,8 +237,6 @@ template <
 		size_type	_size;
 		Allocator	_alloc;
 		T*			_array;
-	/*-------------------- NON-MEMBER FUNCTIONS --------------------*/
-
 };
 
 template <class T, class Allocator>
@@ -154,35 +261,6 @@ vector<T, Allocator>::vector(size_type count,
 	catch(...)
 	{
 		for (size_t j = 0; j < i; ++j)
-			_alloc.destroy(_array + j);
-		_alloc.deallocate(_array, _capacity);
-		throw;
-	}
-}
-
-template <class T, class Allocator>
-template < class InputIt >
-vector<T, Allocator>::vector( typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, 
-							InputIt last, const Allocator& alloc ) : 
-							_capacity(0), _size(0), _alloc(alloc), _array(NULL) {
-	size_type	i;
-	InputIt		tmp(first);
-
-	_size = 0;
-	while (*tmp != *last)
-	{
-		tmp++;
-		_size++;
-	}
-	_capacity = _size;
-	_array = _alloc.allocate(_capacity);
-	try {
-		for (i = 0; *first != *last; ++i, first++)
-			_alloc.construct(_array + i, *first);
-	}
-	catch(...)
-	{
-		for (size_type j = 0; j < i; ++j)
 			_alloc.destroy(_array + j);
 		_alloc.deallocate(_array, _capacity);
 		throw;
@@ -267,33 +345,6 @@ void vector<T, Allocator>::assign( size_type count, const T& value ) {
 		}
 	}
 }
-
-template <class T, class Allocator>
-template < class InputIt >
-void vector<T, Allocator>::assign( typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, InputIt last ) {
-	size_type	count = last - first;
-	size_type	i = 0;
-
-	for (i = 0; i < _size; ++i)
-		_alloc.destroy(_array + i);
-	if (_capacity < count)
-		reserve(count);
-	_size = count;
-	for (i = 0; i < _size && first != last; ++i, ++first)
-	{
-		try
-		{
-			_alloc.construct(_array + i, *first);
-		}
-		catch(...)
-		{
-			for (size_type j = 0; j < i; ++j)
-				_alloc.destroy(_array + j);
-			throw;
-		}
-	}
-}
-
 
 template <class T, class Allocator>
 typename vector<T, Allocator>::allocator_type vector<T, Allocator>::get_allocator() const {
@@ -442,7 +493,6 @@ typename vector<T, Allocator>::iterator vector<T, Allocator>::insert( iterator p
 	// Fill tmp array with value given in function's parameters.
 	try {
 		_alloc.construct(newarr + pos_idx, value);
-		i += 1;
 	}
 	catch(...)
 	{
@@ -534,74 +584,6 @@ void vector<T, Allocator>::insert( iterator pos, size_type count, const T& value
 	_array = newarr;
 	_size += count;
 	_capacity = new_cap;
-}
-
-template <class T, class Allocator>
-template < class InputIt >
-void vector<T, Allocator>::insert( iterator pos, 
-typename ft::enable_if<ft::is_iterator<InputIt>::value, InputIt>::type first, InputIt last ) {
-	size_type	count = 0;
-	size_type	pos_idx = 0;
-	size_type	new_cap = 0;
-	size_type	i;
-	T			*tmp;
-
-	for (InputIt it = first; it != last; ++it, ++count);
-	for (iterator it = begin(); it != pos; ++it, ++pos_idx);
-	if (_capacity < _size + count)
-	{
-		if (_capacity * 2 > _size + count)
-			new_cap = _capacity * 2;
-		else
-			new_cap = _size + count;
-	}
-	else
-		new_cap = _capacity;
-	// Create tmp array and fill it with all elements from _array until pos.
-	tmp = _alloc.allocate(new_cap);
-	try {
-		for (i = 0; i < pos_idx; ++i)
-			_alloc.construct(tmp + i, _array[i]);
-	}
-	catch(...)
-	{
-		for (size_type j = 0; j < i; ++j)
-			_alloc.destroy(tmp + j);
-		_alloc.deallocate(tmp, new_cap);
-		throw;
-	}
-	// Fill tmp array with values from the given range.
-	try {
-		for (; first < last; ++first, ++i)
-			_alloc.construct(tmp + i, *first);
-	}
-		catch(...)
-	{
-		for (size_t j = 0; j < i; ++j)
-			_alloc.destroy(tmp + j);
-		_alloc.deallocate(tmp, new_cap);
-		throw;
-	}
-	// Fill tmp array with values from _array (after pos).
-	try {
-		for (; pos_idx < _size; ++pos_idx, ++i)
-			_alloc.construct(tmp + i, _array[pos_idx]);
-	}
-	catch(...)
-	{
-		printf("Catch3\n");
-		for (size_t j = 0; j < i; ++j)
-			_alloc.destroy(tmp + j);
-		_alloc.deallocate(tmp, new_cap);
-		throw;
-	}
-	// Destroy _array and then make _array equal newarr.
-	for (i = 0; i < _size; ++i)
-		_alloc.destroy(_array + i);
-	_alloc.deallocate(_array, _capacity);
-	_array = tmp;
-	_capacity = new_cap;
-	_size += count;
 }
 
 template <class T, class Allocator>
@@ -737,9 +719,9 @@ void vector<T, Allocator>::resize( size_type count, T value) {
 
 template <class T, class Allocator>
 void vector<T, Allocator>::swap( vector& other ) {
-	std::swap(_size, other._size);
-	std::swap(_capacity, other._capacity);
-	std::swap(_array, other._array);
+	ft::swap(_size, other._size);
+	ft::swap(_capacity, other._capacity);
+	ft::swap(_array, other._array);
 }	
 
 /*---------------------------------------- Iterators ----------------------------------------*/
@@ -826,6 +808,12 @@ bool operator>( const ft::vector<T, Allocator>& lhs,
 template <class T, class Allocator>
 bool operator>=( const ft::vector<T, Allocator>& lhs,
                  const ft::vector<T, Allocator>& rhs ) {return !(lhs < rhs);}
+
+template< class T, class Alloc >
+void swap( std::vector<T,Alloc>& lhs,
+           std::vector<T,Alloc>& rhs ) {
+	lhs.swap(rhs);
+}
 
 }
 

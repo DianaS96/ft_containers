@@ -1,11 +1,35 @@
 #include <iostream>
-namespace ft = std;
-#include <map>
-// #include "containers/map.hpp"
+// namespace ft = std;
+// #include <map>
+#include "containers/map.hpp"
 #include "src/utils2.hpp"
 
-template< class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > >
-void ft_print_map( ft::map<Key, T> & ft_map)
+
+class Timer
+{
+public:
+	static void Start() {
+		gettimeofday(&start, NULL);
+	}
+	static void Stop() {
+		gettimeofday(&end, NULL);
+		res = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
+	}
+	static long getRes() {
+		return res;
+	}
+private:
+	static struct timeval start;
+	static struct timeval end;
+	static long res;
+};
+
+struct timeval Timer::start;
+struct timeval Timer::end;
+long Timer::res;
+
+template< class Key, class T, class Compare, class Allocator >
+void ft_print_map( ft::map<Key, T, Compare, Allocator> & ft_map)
 {
 	ft::map<std::string, int>::const_iterator it = ft_map.begin();
 	for (; it != ft_map.end(); ++it)
@@ -14,6 +38,7 @@ void ft_print_map( ft::map<Key, T> & ft_map)
 }
 
 int main(void) {
+	Timer::Start();
 	ft::map<std::string, int>							ft_map;
 	ft::map<std::string, int>							ft_map_swap;
 	ft::map<std::string, int>::iterator					it1, it2, itlow, itup;
@@ -22,7 +47,7 @@ int main(void) {
 
 	ft::map<std::string, int>::key_compare	mycomp = ft_map.key_comp();
 	std::string								str;
-	for (char c = 'A'; c < 'G'; ++c)
+	for (char c = 'A'; c < 'Z'; ++c)
 	{
 		str = c;
 		ft_map_swap[str] = c;
@@ -181,6 +206,8 @@ int main(void) {
 	std::cout << "Printing tree using const_reverse_iterator" << std::endl;
 	for (const_rev_it1 = ft_map.rbegin(); const_rev_it1 != const_rev_it2; const_rev_it1++)
 		std::cout << const_rev_it1->first << " => " << const_rev_it1->second << "; "  << std::endl;
-
+	Timer::Stop();
+	
+	std::cout << "Total time spent: " << Timer::getRes() << std::endl;
 	return (0);
 }

@@ -61,9 +61,7 @@ public:
 			{
 				nodePtr = nodePtr->_Right;
 				while (nodePtr->_Left)
-				{
 					nodePtr = nodePtr->_Left;
-				}
 			}
 			else {
 				while (nodePtr->_Parent && nodePtr == nodePtr->_Parent->_Right)

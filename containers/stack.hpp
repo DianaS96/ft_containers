@@ -39,6 +39,7 @@ namespace ft
 		/*-------------------- Modifiers --------------------*/
 		void push( const value_type& value ) {c.push_back(value);}
 		void pop() {c.pop_back();}
+		void swap( stack& other ) {ft::swap(this->c, other.c);}
 
 		friend bool operator==( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs ) {return (lhs.c == rhs.c);}
 		friend bool operator!=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs ) {return (lhs.c != rhs.c);}

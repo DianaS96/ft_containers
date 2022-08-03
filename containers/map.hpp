@@ -9,14 +9,6 @@
 
 namespace ft
 {	
-	template <class Key, class T, class Compare>
-	struct PairCompare
-	{
-		bool	operator()(const ft::pair<const Key, T> & first, const ft::pair<const Key, T> & second) const
-		{
-			return Compare()(first.first, second.first);
-		}
-	};
 
 	template<
 	class Key,
@@ -38,7 +30,6 @@ namespace ft
 		typedef const value_type&					const_reference;
 		typedef typename Allocator::pointer			pointer;
 		typedef typename Allocator::const_pointer	const_pointer;
-		typedef PairCompare<Key, T, Compare>		pair_compare;
 		typedef Node<value_type>					node;
 		typedef node*								node_ptr;
 
@@ -55,10 +46,11 @@ namespace ft
 				Compare	comp;
 				value_compare( Compare c ) : comp(c) {}
 			public:
+				value_compare() : comp(Compare()) {}
 				bool operator()( const value_type& lhs, const value_type& rhs ) const {return (comp(lhs.first, rhs.first));}
 		};
 
-		typedef RedBlackTree<ft::pair<const Key, T>, pair_compare, Allocator>	rbtree;
+		typedef RedBlackTree<ft::pair<const Key, T>, value_compare, Allocator>	rbtree;
 
 	private:
 		allocator_type	_alloc;
@@ -79,7 +71,9 @@ namespace ft
 		map( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator() ) : _alloc(alloc), _comp(comp) {
 			_tree.insert(first, last);
 		}
-		map( const map& other ) : _alloc(other._alloc), _comp(other._comp), _tree(other._tree) {}
+		map( const map& other ) : _alloc(other._alloc), _comp(other._comp) {
+			_tree = other._tree;
+		}
 
 		~map() {_tree.clear();}
 
@@ -134,7 +128,7 @@ namespace ft
 		ft::pair<iterator, bool> insert( const value_type& value ) {
 			return _tree.insert(value);
 		}
-		iterator insert( iterator hint, const value_type& value ) {_tree.insert(hint, value);}
+		iterator insert( iterator hint, const value_type& value ) {return _tree.insert(hint, value);}
 		template< class InputIt >
 		void insert( InputIt first, InputIt last ) {_tree.insert(first, last);}
 

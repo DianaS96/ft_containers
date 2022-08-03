@@ -1,6 +1,7 @@
 #include <stack>
 #include "containers/stack.hpp"
 #include <vector>
+#include "src/utils2.hpp"
 
 class Timer
 {
@@ -77,8 +78,8 @@ void	ft_print_stats(get_data data, int res)
     std::cout << std::setw(20) << std::fixed << data.ft_time << " ms" << "|";
     std::cout << std::setw(21) << data.std_time << " ms" << "|";
     std::cout << std::setw(10) << data.time_dif << " ms" << "|";
-	if (data.ft_time == 0.0 || data.std_time == 0.0)
-	    std::cout << std::setw(10) << FGREEN << "N/A - ft_time or std_time == 0" << NONE << std::endl;
+	if (data.std_time == 0.0)
+	    std::cout << std::setw(10) << FPURPLE << "Division by 0" << NONE << std::endl;
 	else
 	    std::cout << std::setw(10) << color << data.time_dif_perc << " %" << NONE << std::endl;
 }
